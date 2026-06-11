@@ -17,3 +17,27 @@ install bun https://bun.com/docs/installation
 `bun install`
 
 `bun run dev`
+
+# steps on how to dev host to LAN
+
+find your local IP address (e.g. `192.168.x.x`)
+
+`bun run dev -- --host`
+
+the app will be accessible from any device on your network at `http://<your-local-ip>:5173`
+
+# steps on how to prod host
+
+install docker https://docs.docker.com/get-docker/
+
+`git clone https://github.com/someoneidoknow/starmap.git`
+
+`cd starmap`
+
+`docker compose up -d --build`
+
+the app runs on `http://localhost:4000` (and `http://localhost:4001` for the second instance)
+
+to update to the latest version: `./deploy.sh`
+
+to force a full rebuild: `./deploy.sh --force`
