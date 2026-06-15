@@ -6,6 +6,7 @@
 	import {
 		PlanetType,
 		StarType,
+		Resource,
 		type SearchResult,
 		type Planet,
 		type Star,
@@ -182,26 +183,51 @@
 		setTimeout(() => { linkCopiedSet.delete(coordText); linkCopiedSet = new Set(linkCopiedSet); }, 1200);
 	}
 
-    function downloadFile(data: string) {
+    function downloadFile(data: string, filename: string) {
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = 'data.json';
+        a.download = filename;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        URL.revokeObjectURL(blob);
+        URL.revokeObjectURL(url);
+    }
+
+    function planetToExport(p: Planet) {
+        return {
+            coordinate: p.coordinate,
+            name: p.name,
+            type: PlanetType[p.type],
+            primary_color: p.primary_color,
+            secondary_color: p.secondary_color,
+            material: p.material,
+            atmosphere: p.atmosphere,
+            temperature: p.temperature,
+            gravity: p.gravity,
+            daycycle_increment: p.daycycle_increment,
+            random_material: p.random_material ?? null,
+            resources: p.resources.map(r => ({ resource: Resource[r.resource], amount: r.amount })),
+            ring: p.ring ? { type: p.ring.type === 0 ? 'Ice' : 'Stone', amount: p.ring.amount, start: p.ring.start, end: p.ring.end } : null
+        };
+    }
+
+    function starToExport(s: Star) {
+        return {
+            coordinate: s.coordinate,
+            type: StarType[s.type],
+            size: s.size,
+            color: s.color
+        };
     }
 
     function downloadData() {
-		let json;
-        if (!stars) {
-            json = JSON.stringify(planets());
+        if (!showStars) {
+            downloadFile(JSON.stringify(listPlanets.map(planetToExport), null, 2), 'planets.json');
         } else {
-            json = JSON.stringify(stars());
+            downloadFile(JSON.stringify(listStars.map(starToExport), null, 2), 'stars.json');
         }
-        downloadFile(json);
     }
 </script>
 
