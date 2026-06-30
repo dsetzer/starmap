@@ -1,5 +1,6 @@
 import { decode } from '@msgpack/msgpack'
 import { ZSTDDecoder } from 'zstddec'
+import { base } from '$app/paths'
 import type { AtlasData } from './types'
 
 let universeData: any = null
@@ -95,7 +96,7 @@ export async function loadUniverse(): Promise<any> {
 	if (universeData) return universeData
 	if (!universePromise) {
 		universePromise = (async () => {
-			const resp = await fetch('/assets/Universe.gab.zst').catch(() => null)
+			const resp = await fetch(`${base}/assets/Universe.gab.zst`).catch(() => null)
 			if (resp && resp.ok) {
 				const u8 = new Uint8Array(await resp.arrayBuffer())
 				const dec = new ZSTDDecoder()
@@ -120,8 +121,8 @@ export async function loadTextureAtlas(): Promise<{ atlasData: AtlasData; image:
 	if (!atlasPromise) {
 		atlasPromise = (async () => {
 			const [atlasResp, imageResp] = await Promise.all([
-				fetch('/assets/textures.msgpack.zst'),
-				fetch('/assets/textures.png')
+				fetch(`${base}/assets/textures.msgpack.zst`),
+				fetch(`${base}/assets/textures.png`)
 			])
 			const atlasCompressed = new Uint8Array(await atlasResp.arrayBuffer())
 			const dec = new ZSTDDecoder()
