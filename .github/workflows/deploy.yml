@@ -21,11 +21,13 @@ jobs:
 
       - name: Build
         run: cd webui && npm run build
+        env:
+          NODE_ENV: production
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./webui/.svelte-kit/output/client
+          path: ./webui/build
 
   deploy:
     needs: build
