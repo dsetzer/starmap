@@ -11,7 +11,10 @@
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"format": "prettier --write .",
-		"lint": "prettier --check . && eslint ."
+		"lint": "prettier --check . && eslint .",
+		"tauri": "tauri",
+		"tauri:dev": "tauri dev",
+		"tauri:build": "tauri build"
 	},
 	"devDependencies": {
 		"@eslint/compat": "^1.2.5",
@@ -19,6 +22,7 @@
 		"@sveltejs/adapter-node": "^5.2.12",
 		"@sveltejs/kit": "^2.22.0",
 		"@sveltejs/vite-plugin-svelte": "^6.0.0",
+		"@tauri-apps/cli": "^2",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^3.0.0",
@@ -30,13 +34,13 @@
 		"typescript": "^5.0.0",
 		"typescript-eslint": "^8.20.0",
 		"vite": "^7.0.4",
-		"vite-plugin-devtools-json": "1.0.0"
+		"vite-plugin-devtools-json": "1.0.0",
+		"vite-plugin-pwa": "^1.3.0"
 	},
 	"dependencies": {
 		"@msgpack/msgpack": "^3.1.2",
 		"@napi-rs/canvas": "^0.1.78",
 		"pixi.js": "8.9.2",
-		"svelte-french-toast": "^1.2.0",
 		"svelte-range-slider-pips": "^4.0.7",
 		"vanilla-colorful": "^0.7.2",
 		"zstddec": "^0.1.0"

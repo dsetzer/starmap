@@ -1039,30 +1039,37 @@
 	}
 	.overlay {
 		position: absolute;
-		color: #0f0;
-		font: 14px/16px monospace;
+		color: #f8fafc;
+		font: 13px/15px ui-monospace, SFMono-Regular, monospace;
 		pointer-events: none;
+		background: rgba(15, 23, 42, 0.88);
+		border: 1px solid rgba(255, 255, 255, 0.12);
+		border-radius: 0.65rem;
+		padding: 0.34rem 0.55rem;
+		box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
 	}
 	.fps {
-		top: 8px;
+		top: 12px;
 		left: 10px;
 	}
 	.resbtn {
-		top: 8px;
-		left: 70px;
-		background: rgba(0, 0, 0, 0.5);
-		border: 1px solid #0f0;
-		color: #0f0;
-		padding: 2px 6px;
-		font: 12px/14px monospace;
+		top: 12px;
+		left: 92px;
+		background: rgba(15, 23, 42, 0.92);
+		border: 1px solid var(--green-3);
+		color: var(--text);
+		padding: 0.35rem 0.7rem;
+		font: 12px/14px ui-monospace, SFMono-Regular, monospace;
 		cursor: pointer;
 		pointer-events: auto;
+		border-radius: 0.65rem;
+		transition: background 0.2s ease, border-color 0.2s ease;
 	}
 	.resbtn:hover {
-		background: rgba(0, 0, 0, 0.7);
+		background: rgba(15, 23, 42, 1);
 	}
 	.coord {
-		top: 8px;
+		top: 12px;
 		right: 10px;
 	}
 </style>

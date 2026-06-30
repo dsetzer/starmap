@@ -1,0 +1,31 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Starmap",
+  "version": "0.1.0",
+  "identifier": "com.someoneidoknow.starmap",
+  "build": {
+    "beforeDevCommand": "npm run dev -- --host 127.0.0.1 --port 1420",
+    "beforeBuildCommand": "npm run build",
+    "devUrl": "http://127.0.0.1:1420",
+    "frontendDist": "../build"
+  },
+  "app": {
+    "windows": [
+      {
+        "title": "Starmap",
+        "width": 1400,
+        "height": 900,
+        "resizable": true,
+        "fullscreen": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "icon": []
+  }
+}

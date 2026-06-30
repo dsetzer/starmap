@@ -1,0 +1,34 @@
+{
+  "name": "starmap-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Desktop wrapper for the Starmap web app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "prestart": "npm --prefix ../webui run build",
+    "dist": "npm --prefix ../webui run build && electron-builder"
+  },
+  "devDependencies": {
+    "electron": "^36.0.0",
+    "electron-builder": "^26.0.0"
+  },
+  "build": {
+    "appId": "com.someoneidoknow.starmap",
+    "productName": "Starmap",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/**/{CHANGELOG.md,README.md,README,readme.md,readme}"
+    ],
+    "extraResources": [
+      {
+        "from": "../webui/build",
+        "to": "app/webui-build",
+        "filter": ["**/*"]
+      }
+    ]
+  }
+}
