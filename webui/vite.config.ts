@@ -10,10 +10,12 @@ export default defineConfig({
 		VitePWA({
 			registerType: 'autoUpdate',
 			includeAssets: ['favicon.svg', 'robots.txt'],
+			base: process.env.NODE_ENV === 'production' ? '/starmap/' : '/',
 			manifest: {
 				name: 'Starmap',
 				short_name: 'Starmap',
-				start_url: '/',
+				start_url: process.env.NODE_ENV === 'production' ? '/starmap/' : '/',
+				scope: process.env.NODE_ENV === 'production' ? '/starmap/' : '/',
 				display: 'standalone',
 				background_color: '#0f172a',
 				theme_color: '#0f172a',
