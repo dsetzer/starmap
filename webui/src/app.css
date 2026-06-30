@@ -1,45 +1,36 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;700&display=swap');
+
 :root {
-	--green-1: oklch(0.94 0.04 230);
-	--green-2: oklch(0.88 0.06 230);
-	--green-3: oklch(0.77 0.08 230);
-	--green-4: oklch(0.62 0.09 230);
-	--green-5: oklch(0.45 0.08 230);
+	/* Tactical Minimalist palette */
+	--t-bg: #051424;
+	--t-surface: #0d1c2d;
+	--t-surface-high: #1c2b3c;
+	--t-border: #2c3a4c;
+	--t-text: #d4e4fa;
+	--t-text-dim: #8ba0b8;
+	--t-primary: #6c7bff;
+	--t-primary-text: #e1e0ff;
+	--t-secondary: #bcff5f;
+	--t-error: #ff6b6b;
+	--t-radius: 0.375rem;
+	--t-radius-sm: 0.2rem;
+	--t-font-head: 'Geist', system-ui, sans-serif;
+	--t-font-body: 'Inter', system-ui, sans-serif;
+	--t-font-mono: 'JetBrains Mono', ui-monospace, monospace;
 
-	--bg: oklch(0.98 0.02 220);
-	--surface: oklch(0.92 0.03 220);
-	--text: oklch(0.18 0.02 220);
+	/* legacy theme vars, mapped onto the tactical palette so existing
+	   components (which still reference --green-N, --bg, --surface, --text)
+	   pick it up automatically */
+	--green-1: #2c3a4c;
+	--green-2: #344459;
+	--green-3: #46597a;
+	--green-4: #6c7bff;
+	--green-5: #4b54b8;
+
+	--bg: var(--t-bg);
+	--surface: var(--t-surface);
+	--text: var(--t-text);
 	--ui-scale: 0.98;
-
-	color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-	:root {
-		--green-1: oklch(0.66 0.07 230);
-		--green-2: oklch(0.54 0.08 230);
-		--green-3: oklch(0.42 0.09 230);
-		--green-4: oklch(0.30 0.08 230);
-		--green-5: oklch(0.20 0.06 230);
-
-		--bg: oklch(0.10 0.02 220);
-		--surface: oklch(0.18 0.03 220);
-		--text: oklch(0.92 0.02 220);
-
-		color-scheme: dark;
-	}
-}
-
-
-:root[data-theme='dark'] {
-	--green-1: oklch(0.66 0.07 230);
-	--green-2: oklch(0.54 0.08 230);
-	--green-3: oklch(0.42 0.09 230);
-	--green-4: oklch(0.30 0.08 230);
-	--green-5: oklch(0.20 0.06 230);
-
-	--bg: oklch(0.10 0.02 220);
-	--surface: oklch(0.18 0.03 220);
-	--text: oklch(0.92 0.02 220);
 
 	color-scheme: dark;
 }
@@ -48,7 +39,7 @@ body {
 	margin: 0;
 	background: var(--bg);
 	color: var(--text);
-	font-family: system-ui, sans-serif;
+	font-family: var(--t-font-body);
 	font-size: calc(16px * var(--ui-scale));
 	line-height: 1.15;
 }
@@ -64,17 +55,17 @@ body {
 .btn {
 	padding: 0.5rem 1rem;
 	border: none;
-	border-radius: 0.4rem;
-	background: var(--green-3);
-	color: var(--text);
+	border-radius: var(--t-radius);
+	background: var(--t-primary);
+	color: var(--t-primary-text);
 	cursor: pointer;
 	transition: background 0.2s;
 }
 .btn:hover {
-	background: var(--green-2);
+	background: color-mix(in oklab, var(--t-primary) 80%, white);
 }
 .btn:active {
-	background: var(--green-4);
+	background: color-mix(in oklab, var(--t-primary) 80%, black);
 }
 
 .noselect {
