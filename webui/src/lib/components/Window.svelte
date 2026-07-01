@@ -289,7 +289,7 @@
 		user-select: none;
 		font-family: var(--t-font-mono);
 		font-size: 0.78rem;
-		font-weight: 500;
+		font-weight: 300;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);

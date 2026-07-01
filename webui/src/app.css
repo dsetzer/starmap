@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@500;600&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500&display=swap');
 
 :root {
 	/* Tactical Minimalist palette */
@@ -14,9 +14,10 @@
 	--t-error: #ff6b6b;
 	--t-radius: 0.375rem;
 	--t-radius-sm: 0.2rem;
-	--t-font-head: 'Geist', system-ui, sans-serif;
-	--t-font-body: 'Inter', system-ui, sans-serif;
-	--t-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+	--t-font-head: 'Exo 2', system-ui, sans-serif;
+	--t-font-body: 'Exo 2', system-ui, sans-serif;
+	--t-font-mono: 'Exo 2', system-ui, sans-serif;
+	--t-font-weight-thin: 300;
 
 	/* legacy theme vars, mapped onto the tactical palette so existing
 	   components (which still reference --green-N, --bg, --surface, --text)
@@ -40,6 +41,7 @@ body {
 	background: var(--bg);
 	color: var(--text);
 	font-family: var(--t-font-body);
+	font-weight: var(--t-font-weight-thin);
 	font-size: calc(16px * var(--ui-scale));
 	line-height: 1.15;
 }
