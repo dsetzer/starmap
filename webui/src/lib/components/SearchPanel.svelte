@@ -69,10 +69,13 @@
 	let hexPickerEl: any;
 	let hexPickerSecondaryEl: any;
 	let sizeClass = '';
+	let collapsed = false;
 	let formEl: HTMLDivElement;
 	let ro: ResizeObserver | null = null;
 	let spMaxHeight: number | undefined;
 	const spMinWidth = 360;
+	const spDefaultWidth = 720;
+	const spMaxWidth = 960;
 	function normalizeColor(v: string): string | '' {
 		if (!v) return '';
 		v = v.trim();
@@ -285,11 +288,22 @@
 	}
 </script>
 
-<Window bind:left bind:top collapsible={true} minWidth={spMinWidth} maxHeight={spMaxHeight}>
+<Window
+	bind:left
+	bind:top
+	bind:collapsed
+	collapsible={true}
+	minWidth={spMinWidth}
+	maxWidth={spMaxWidth}
+	width={spDefaultWidth}
+	maxHeight={spMaxHeight}
+>
 	<span slot="title">Search</span>
 
 	<div class="form {sizeClass}" bind:this={formEl}>
+		<div class="pair">
 		<section class="section card">
+			<h3>Object Info</h3>
 			<div class="row">
 				<label class="field">
 					<span class="label">Name</span>
@@ -321,7 +335,7 @@
 			</div>
 
 			<label class="field">
-				<span class="label">Coordinates</span>
+				<span class="label">Coordinates (X, Y, Z, W)</span>
 				<input class="input" bind:value={coord_box} on:input={coord_oninput} placeholder="x, y, z, w" type="text" />
 			</label>
 		</section>
@@ -422,7 +436,9 @@
 				</div>
 			</div>
 		</section>
+		</div>
 
+		<div class="pair">
 		<section class="section card">
 			<h3>Planet Type</h3>
 			<div class="pill-wrap">
@@ -460,10 +476,13 @@
 				{/each}
 			</div>
 		</section>
+		</div>
 
-		<section class="section card compact2">
+		<div class="pair">
+		<section class="section card">
+			<h3>Range Filters</h3>
 			<div class="sub">
-				<h3>Temperature ({temperature_range[0]} to {temperature_range[1]})</h3>
+				<h4>Temperature ({temperature_range[0]} to {temperature_range[1]})</h4>
 				<div class="unscaled">
 					<RangeSlider
 						min={-400}
@@ -479,7 +498,7 @@
 				</div>
 			</div>
 			<div class="sub">
-				<h3>Gravity ({gravity_range[0]}g to {gravity_range[1]}g)</h3>
+				<h4>Gravity ({gravity_range[0]}g to {gravity_range[1]}g)</h4>
 				<div class="unscaled">
 					<RangeSlider
 						min={0}
@@ -497,8 +516,9 @@
 		</section>
 
 		<section class="section card compact4">
+			<h3>Toggles</h3>
 			<div class="sub">
-				<h3>Atmosphere</h3>
+				<h4>Atmosphere</h4>
 				<TriStateFilter
 					value={atmosphere_filter}
 					onChange={(newValue) => {
@@ -509,7 +529,7 @@
 				/>
 			</div>
 			<div class="sub">
-				<h3>Rings</h3>
+				<h4>Rings</h4>
 				<TriStateFilter
 					value={ring_filter}
 					onChange={(newValue) => {
@@ -521,7 +541,7 @@
 				/>
 			</div>
 			<div class="sub">
-				<h3>Tidally Locked</h3>
+				<h4>Tidally Locked</h4>
 				<TriStateFilter
 					value={tidal_filter}
 					onChange={(newValue) => {
@@ -532,7 +552,7 @@
 				/>
 			</div>
 			<div class="sub">
-				<h3>Earthlikes in System</h3>
+				<h4>Earthlikes</h4>
 				<TriStateFilter
 					value={earthlikes_filter}
 					onChange={(newValue) => {
@@ -543,6 +563,7 @@
 				/>
 			</div>
 		</section>
+		</div>
 
 		<section class="section card">
 			<h3>Resources</h3>
@@ -561,22 +582,14 @@
 		</section>
 
 		<div class="footer">
-			<button type="button" class="reset-btn" on:click={resetAllFilters}>
-				<svg
-					xmlns="http://www.w3.org/2000/svg"
-					fill="none"
-					viewBox="0 0 24 24"
-					stroke-width="1.5"
-					stroke="currentColor"
-				>
-					<path
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99"
-					/>
-				</svg>
-				Reset All Filters
+			<button type="button" class="footer-btn" on:click={() => (collapsed = true)}>
+				Close
 			</button>
+			<div class="footer-right">
+				<button type="button" class="footer-btn" on:click={resetAllFilters}>
+					Reset All
+				</button>
+			</div>
 		</div>
 	</div>
 </Window>
@@ -604,15 +617,7 @@
 	.form.xs .field.narrow {
 		width: 100%;
 	}
-	.form.sm .section.compact4,
-	.form.md .section.compact4 {
-		grid-template-columns: repeat(2, 1fr);
-	}
 	.form.xs .section.compact4 {
-		grid-template-columns: repeat(2, 1fr);
-	}
-	.form.xs .section.compact2,
-	.form.sm .section.compact2 {
 		grid-template-columns: 1fr;
 	}
 	.form.md .star-grid {
@@ -634,6 +639,17 @@
 		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 	}
 
+	.pair {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: calc(0.6rem * var(--ui-scale));
+		align-items: start;
+	}
+	.form.sm .pair,
+	.form.xs .pair {
+		grid-template-columns: 1fr;
+	}
+
 	/* card */
 	.card {
 		background: color-mix(in oklab, var(--t-surface) 60%, transparent);
@@ -641,11 +657,8 @@
 		border-radius: var(--t-radius);
 		padding: calc(0.75rem * var(--ui-scale));
 	}
-	.card.compact2 {
-		grid-template-columns: 1fr 1fr;
-	}
 	.card.compact4 {
-		grid-template-columns: repeat(4, 1fr);
+		grid-template-columns: repeat(2, 1fr);
 	}
 
 	.field {
@@ -695,13 +708,9 @@
 		display: grid;
 		gap: calc(0.6rem * var(--ui-scale));
 	}
-	.section.compact2 {
-		grid-template-columns: 1fr 1fr;
-		gap: calc(0.5rem * var(--ui-scale));
-	}
 	.section.compact4 {
-		grid-template-columns: repeat(4, 1fr);
-		gap: calc(0.5rem * var(--ui-scale));
+		grid-template-columns: repeat(2, 1fr);
+		gap: calc(0.6rem * var(--ui-scale));
 	}
 	.sub {
 		display: grid;
@@ -718,14 +727,16 @@
 		text-transform: uppercase;
 		color: var(--t-primary-text);
 	}
-	.compact2 h3,
 	.compact4 h3 {
 		grid-column: 1 / -1;
 	}
-	.sub h3 {
-		border-bottom: none;
-		padding-bottom: 0;
+	h4 {
+		margin: 0;
+		font-family: var(--t-font-mono);
 		font-size: calc(0.66rem * var(--ui-scale));
+		font-weight: 500;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
 		color: var(--t-text-dim);
 	}
 
@@ -827,11 +838,24 @@
 
 	.footer {
 		display: flex;
-		justify-content: flex-end;
-		padding-top: calc(0.5rem * var(--ui-scale));
+		justify-content: space-between;
+		align-items: center;
+		padding-top: calc(0.6rem * var(--ui-scale));
 		border-top: 1px solid var(--t-border);
 	}
-	.reset-btn {
+	.footer-right {
+		display: flex;
+		gap: calc(0.5rem * var(--ui-scale));
+	}
+	.form.xs .footer {
+		flex-direction: column-reverse;
+		align-items: stretch;
+		gap: calc(0.5rem * var(--ui-scale));
+	}
+	.form.xs .footer-right {
+		flex-direction: column;
+	}
+	.footer-btn {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -849,15 +873,15 @@
 		cursor: pointer;
 		transition: all 0.15s ease;
 	}
-	.reset-btn svg {
+	.footer-btn svg {
 		width: 1rem;
 		height: 1rem;
 	}
-	.reset-btn:hover {
-		border-color: var(--t-error);
-		color: var(--t-error);
+	.footer-btn:hover {
+		border-color: var(--t-primary);
+		color: var(--t-text);
 	}
-	.reset-btn:active {
+	.footer-btn:active {
 		transform: scale(0.98);
 	}
 </style>
