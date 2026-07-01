@@ -253,8 +253,7 @@
 		position: fixed;
 		min-width: calc(180px * var(--ui-scale));
 		max-width: calc(640px * var(--ui-scale));
-		background: color-mix(in oklab, var(--t-surface) 85%, transparent);
-		backdrop-filter: blur(12px);
+		background: color-mix(in oklab, var(--t-surface) 96%, transparent);
 		color: var(--t-text);
 		border: 1px solid var(--t-border);
 		border-radius: calc(var(--t-radius) * var(--ui-scale));
