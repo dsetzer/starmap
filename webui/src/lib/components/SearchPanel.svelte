@@ -70,6 +70,8 @@
 	let hexPickerSecondaryEl: any;
 	let sizeClass = '';
 	let collapsed = false;
+	let primaryPickerOpen = false;
+	let secondaryPickerOpen = false;
 	let formEl: HTMLDivElement;
 	let ro: ResizeObserver | null = null;
 	let spMaxHeight: number | undefined;
@@ -342,99 +344,123 @@
 
 		<section class="section card">
 			<h3>Primary Color</h3>
-			<div class="color-row">
-				{#if colorPickerReady}
-					<hex-color-picker
-						bind:this={hexPickerEl}
-						color={color_hex}
-						on:color-changed={(e: any) => {
-							color_hex = e.detail.value;
-							color_input = color_hex;
-							run();
-						}}
-					></hex-color-picker>
-				{/if}
-				<div class="color-sim">
-					<label class="field">
-						<span class="label">Manual color</span>
-						<input
-							class="input"
-							bind:value={color_input}
-							on:input={color_text_oninput}
-							placeholder="#ff8800 or rgb(255,136,0)"
-						/>
-					</label>
-					<label class="field">
-						<span class="label"
-							>Color tolerance {color_similarity}% {color_similarity === 0 ? '(off)' : ''}</span
+			<button
+				type="button"
+				class="swatch-row"
+				on:click={() => (primaryPickerOpen = !primaryPickerOpen)}
+				aria-expanded={primaryPickerOpen}
+			>
+				<span class="swatch" style:background={color_hex || 'transparent'}></span>
+				<span class="swatch-hex">{color_hex || 'No color set'}</span>
+				<span class="swatch-arrow">{primaryPickerOpen ? '▾' : '▸'}</span>
+			</button>
+			{#if primaryPickerOpen}
+				<div class="color-row">
+					{#if colorPickerReady}
+						<hex-color-picker
+							bind:this={hexPickerEl}
+							color={color_hex}
+							on:color-changed={(e: any) => {
+								color_hex = e.detail.value;
+								color_input = color_hex;
+								run();
+							}}
+						></hex-color-picker>
+					{/if}
+					<div class="color-sim">
+						<label class="field">
+							<span class="label">Manual color</span>
+							<input
+								class="input"
+								bind:value={color_input}
+								on:input={color_text_oninput}
+								placeholder="#ff8800 or rgb(255,136,0)"
+							/>
+						</label>
+						<label class="field">
+							<span class="label"
+								>Color tolerance {color_similarity}% {color_similarity === 0 ? '(off)' : ''}</span
+							>
+							<input
+								type="range"
+								min="0"
+								max="100"
+								bind:value={color_similarity}
+								on:input={() => run()}
+							/>
+						</label>
+						<button
+							type="button"
+							class="clear"
+							on:click={() => {
+								color_hex = '';
+								color_input = '';
+								color_similarity = 0;
+								run();
+							}}>Clear</button
 						>
-						<input
-							type="range"
-							min="0"
-							max="100"
-							bind:value={color_similarity}
-							on:input={() => run()}
-						/>
-					</label>
-					<button
-						type="button"
-						class="clear"
-						on:click={() => {
-							color_hex = '';
-							color_input = '';
-							color_similarity = 0;
-							run();
-						}}>Clear</button
-					>
+					</div>
 				</div>
-			</div>
+			{/if}
 			<h3>Secondary Color</h3>
-			<div class="color-row">
-				{#if colorPickerReady}
-					<hex-color-picker
-						bind:this={hexPickerSecondaryEl}
-						color={secondary_color_hex}
-						on:color-changed={(e: any) => {
-							secondary_color_hex = e.detail.value;
-							secondary_color_input = secondary_color_hex;
-							run();
-						}}
-					></hex-color-picker>
-				{/if}
-				<div class="color-sim">
-					<label class="field">
-						<span class="label">Manual color</span>
-						<input
-							class="input"
-							bind:value={secondary_color_input}
-							on:input={secondary_color_text_oninput}
-							placeholder="#ff8800 or rgb(255,136,0)"
-						/>
-					</label>
-					<label class="field">
-						<span class="label"
-							>Color tolerance {secondary_color_similarity}% {secondary_color_similarity === 0 ? '(off)' : ''}</span
+			<button
+				type="button"
+				class="swatch-row"
+				on:click={() => (secondaryPickerOpen = !secondaryPickerOpen)}
+				aria-expanded={secondaryPickerOpen}
+			>
+				<span class="swatch" style:background={secondary_color_hex || 'transparent'}></span>
+				<span class="swatch-hex">{secondary_color_hex || 'No color set'}</span>
+				<span class="swatch-arrow">{secondaryPickerOpen ? '▾' : '▸'}</span>
+			</button>
+			{#if secondaryPickerOpen}
+				<div class="color-row">
+					{#if colorPickerReady}
+						<hex-color-picker
+							bind:this={hexPickerSecondaryEl}
+							color={secondary_color_hex}
+							on:color-changed={(e: any) => {
+								secondary_color_hex = e.detail.value;
+								secondary_color_input = secondary_color_hex;
+								run();
+							}}
+						></hex-color-picker>
+					{/if}
+					<div class="color-sim">
+						<label class="field">
+							<span class="label">Manual color</span>
+							<input
+								class="input"
+								bind:value={secondary_color_input}
+								on:input={secondary_color_text_oninput}
+								placeholder="#ff8800 or rgb(255,136,0)"
+							/>
+						</label>
+						<label class="field">
+							<span class="label"
+								>Color tolerance {secondary_color_similarity}% {secondary_color_similarity === 0 ? '(off)' : ''}</span
+							>
+							<input
+								type="range"
+								min="0"
+								max="100"
+								bind:value={secondary_color_similarity}
+								on:input={() => run()}
+							/>
+						</label>
+						<button
+							type="button"
+							class="clear"
+							on:click={() => {
+								secondary_color_hex = '';
+								secondary_color_input = '';
+								secondary_color_similarity = 0;
+								run();
+							}}>Clear</button
 						>
-						<input
-							type="range"
-							min="0"
-							max="100"
-							bind:value={secondary_color_similarity}
-							on:input={() => run()}
-						/>
-					</label>
-					<button
-						type="button"
-						class="clear"
-						on:click={() => {
-							secondary_color_hex = '';
-							secondary_color_input = '';
-							secondary_color_similarity = 0;
-							run();
-						}}>Clear</button
-					>
+					</div>
 				</div>
-			</div>
+			{/if}
 		</section>
 		</div>
 
@@ -799,6 +825,40 @@
 	}
 	:global(.rs .range-slider__pips) {
 		display: none;
+	}
+
+	.swatch-row {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		width: 100%;
+		padding: calc(0.4rem * var(--ui-scale)) calc(0.5rem * var(--ui-scale));
+		border: 1px solid var(--t-border);
+		border-radius: var(--t-radius-sm);
+		background: transparent;
+		color: var(--t-text);
+		cursor: pointer;
+		margin-bottom: calc(0.5rem * var(--ui-scale));
+	}
+	.swatch-row:hover {
+		border-color: var(--t-primary);
+	}
+	.swatch {
+		width: 1.1rem;
+		height: 1.1rem;
+		border-radius: var(--t-radius-sm);
+		border: 1px solid var(--t-border);
+		flex: 0 0 auto;
+	}
+	.swatch-hex {
+		font-family: var(--t-font-mono);
+		font-size: calc(0.78rem * var(--ui-scale));
+		flex: 1;
+		text-align: left;
+	}
+	.swatch-arrow {
+		color: var(--t-text-dim);
+		font-size: 0.7rem;
 	}
 
 	.color-row {
