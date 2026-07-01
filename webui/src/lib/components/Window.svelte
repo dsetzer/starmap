@@ -174,13 +174,14 @@
 		setTimeout(checkHeight, 0);
 		setTimeout(checkHeight, 10);
 		setTimeout(checkHeight, 100);
-		setInterval(checkHeight, 1000); // possibly fixes a weird bug
-		
-		if (typeof window !== 'undefined') {
-			const onR = () => enforceBounds();
-			window.addEventListener('resize', onR);
-			return () => window.removeEventListener('resize', onR);
-		}
+		const heightCheckInterval = setInterval(checkHeight, 1000); // possibly fixes a weird bug
+
+		const onR = () => enforceBounds();
+		if (typeof window !== 'undefined') window.addEventListener('resize', onR);
+		return () => {
+			clearInterval(heightCheckInterval);
+			if (typeof window !== 'undefined') window.removeEventListener('resize', onR);
+		};
 	});
 
 	$: if (headerEl) headerHeight = headerEl.offsetHeight;
@@ -253,14 +254,14 @@
 		position: fixed;
 		min-width: calc(180px * var(--ui-scale));
 		max-width: calc(640px * var(--ui-scale));
-		background: var(--surface);
-		color: var(--text);
-		border: 1px solid var(--green-4);
-		border-radius: calc(0.5rem * var(--ui-scale));
-		box-shadow: 0 4px 12px rgb(0 0 0 / 0.2);
+		background: color-mix(in oklab, var(--t-surface) 96%, transparent);
+		color: var(--t-text);
+		border: 1px solid var(--t-border);
+		border-radius: calc(var(--t-radius) * var(--ui-scale));
+		box-shadow: 0 4px 24px rgb(0 0 0 / 0.4);
 		overflow: hidden;
 		z-index: 900;
-		font-family: system-ui, sans-serif;
+		font-family: var(--t-font-body);
 		transform: scale(var(--ui-scale));
 		transform-origin: top left;
 	}
@@ -282,15 +283,21 @@
 		cursor: move;
 		padding: calc(0.6rem * var(--ui-scale)) calc(1rem * var(--ui-scale))
 			calc(0.5rem * var(--ui-scale));
-		background: var(--green-1);
-		border-bottom: 1px solid var(--green-4);
-		border-radius: calc(0.5rem * var(--ui-scale)) calc(0.5rem * var(--ui-scale)) 0 0;
+		background: var(--t-surface-high);
+		border-bottom: 1px solid var(--t-border);
+		border-radius: calc(var(--t-radius) * var(--ui-scale)) calc(var(--t-radius) * var(--ui-scale)) 0 0;
 		user-select: none;
+		font-family: var(--t-font-mono);
+		font-size: 0.78rem;
+		font-weight: 500;
+		letter-spacing: 0.05em;
+		text-transform: uppercase;
+		color: var(--t-primary-text);
 	}
 	.arrow {
 		background: transparent;
 		border: none;
-		color: var(--text);
+		color: var(--t-text-dim);
 		font-size: 1rem;
 		cursor: pointer;
 		padding: 0;

@@ -204,6 +204,7 @@
 	function pick(e: CustomEvent<{ x: number; y: number; z: number; w: number }>) {
 		const c = e.detail;
 		selected = clampCoord(scale < planetShowAt ? { x: c.x, y: c.y, z: 0, w: 0 } : c);
+		placed = false;
 	}
 	$: selectorTune =
 		info.Type === 'Star' || info.Type === 'BlackHole' || info.Type === 'AsteroidField' ? 0.2 : 0.07;
