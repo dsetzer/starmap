@@ -174,13 +174,14 @@
 		setTimeout(checkHeight, 0);
 		setTimeout(checkHeight, 10);
 		setTimeout(checkHeight, 100);
-		setInterval(checkHeight, 1000); // possibly fixes a weird bug
-		
-		if (typeof window !== 'undefined') {
-			const onR = () => enforceBounds();
-			window.addEventListener('resize', onR);
-			return () => window.removeEventListener('resize', onR);
-		}
+		const heightCheckInterval = setInterval(checkHeight, 1000); // possibly fixes a weird bug
+
+		const onR = () => enforceBounds();
+		if (typeof window !== 'undefined') window.addEventListener('resize', onR);
+		return () => {
+			clearInterval(heightCheckInterval);
+			if (typeof window !== 'undefined') window.removeEventListener('resize', onR);
+		};
 	});
 
 	$: if (headerEl) headerHeight = headerEl.offsetHeight;
