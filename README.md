@@ -6,11 +6,17 @@ credits to [dorpg](https://github.com/dorpg9) for the textures
 
 credits to [Zalander](https://github.com/anonymousomeone) for search functions
 
+# live site
+
+hosted on GitHub Pages: https://dsetzer.github.io/starmap/
+
+deploys automatically from `main` via `.github/workflows/deploy.yml`
+
 # steps on how to run locally
 
 install bun https://bun.com/docs/installation
 
-`git clone https://github.com/someoneidoknow/starmap.git`
+`git clone https://github.com/dsetzer/starmap.git`
 
 `cd starmap/webui`
 
@@ -30,7 +36,7 @@ the app will be accessible from any device on your network at `http://<your-loca
 
 install docker https://docs.docker.com/get-docker/
 
-`git clone https://github.com/someoneidoknow/starmap.git`
+`git clone https://github.com/dsetzer/starmap.git`
 
 `cd starmap`
 
