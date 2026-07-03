@@ -374,6 +374,15 @@
 		}
 		centerView();
 
+		// fit the initial view to the window instead of starting fully zoomed out
+		const worldSpan = 216; // universe coords span roughly -100..100 plus padding
+		const fitScale = Math.max(
+			minZoom,
+			Math.min(maxZoom, Math.min(app.screen.width, app.screen.height) / worldSpan)
+		);
+		scale = targetScale = fitScale;
+		universe.scale.set(scale);
+
 		const onResize = () => {
 			centerView();
 			if (Math.abs(currentPixelRatio - window.devicePixelRatio) > 0.01) {

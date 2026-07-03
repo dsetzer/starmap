@@ -4,7 +4,7 @@
 	import TriStateFilter from './TriStateFilter.svelte';
 	import TriPill from './TriPill.svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import 'svelte-range-slider-pips/dist/svelte-range-slider-pips.css';
+	import 'svelte-range-slider-pips/dist/range-slider-pips.css';
 	import {
 		Resource,
 		SearchType,
@@ -23,8 +23,6 @@
 	const types = ['Starts with', 'Contains', 'Ends with'];
 
 	const allResources = [
-		Resource.Iron,
-		Resource.Copper,
 		Resource.Coal,
 		Resource.Lead,
 		Resource.Titanium,
@@ -562,7 +560,6 @@
 						ring_filter = newValue;
 						run();
 					}}
-					yesLabel="Has"
 					className="sm"
 				/>
 			</div>
@@ -723,6 +720,10 @@
 		color: var(--t-text-dim);
 		opacity: 0.8;
 	}
+	.select option {
+		background: var(--t-surface-high);
+		color: var(--t-text);
+	}
 	.input:hover,
 	.select:hover {
 		border-color: var(--t-primary);
@@ -825,22 +826,17 @@
 		justify-content: flex-start;
 	}
 
-	:global(.rs .range-slider__track) {
-		background: var(--t-border) !important;
-		height: 2px;
-		border-radius: 0;
-	}
-	:global(.rs .range-slider__range) {
-		background: var(--t-primary) !important;
-	}
-	:global(.rs .range-slider__thumb) {
-		background: var(--t-primary) !important;
-		border: 2px solid var(--t-surface) !important;
-		width: 0.85rem;
-		height: 0.85rem;
-	}
-	:global(.rs .range-slider__pips) {
-		display: none;
+	:global(.rs) {
+		--range-slider: var(--t-border);
+		--range-handle-inactive: var(--t-primary);
+		--range-handle: var(--t-primary);
+		--range-handle-focus: var(--t-primary);
+		--range-handle-border: var(--t-primary);
+		--range-range-inactive: var(--t-primary);
+		--range-range: var(--t-primary);
+		--range-float-inactive: var(--t-primary);
+		--range-float: var(--t-primary);
+		--range-float-text: var(--t-primary-text);
 	}
 
 	.swatch-row {
