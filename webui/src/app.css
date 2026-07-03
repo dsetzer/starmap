@@ -1,15 +1,15 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;400&display=swap');
 
 :root {
 	/* Tactical Minimalist palette */
 	--t-bg: #051424;
-	--t-surface: #0d1c2d;
-	--t-surface-high: #1c2b3c;
-	--t-border: #2c3a4c;
-	--t-text: #d4e4fa;
-	--t-text-dim: #8ba0b8;
-	--t-primary: #6c7bff;
-	--t-primary-text: #e1e0ff;
+	--t-surface: #0d1f33;
+	--t-surface-high: #1e3350;
+	--t-border: #345070;
+	--t-text: #e3edff;
+	--t-text-dim: #93aed0;
+	--t-primary: #7c8bff;
+	--t-primary-text: #eceaff;
 	--t-secondary: #bcff5f;
 	--t-error: #ff6b6b;
 	--t-radius: 0.375rem;
@@ -17,7 +17,7 @@
 	--t-font-head: 'Exo 2', system-ui, sans-serif;
 	--t-font-body: 'Exo 2', system-ui, sans-serif;
 	--t-font-mono: 'Exo 2', system-ui, sans-serif;
-	--t-font-weight-thin: 300;
+	--t-font-weight-thin: 200;
 
 	/* legacy theme vars, mapped onto the tactical palette so existing
 	   components (which still reference --green-N, --bg, --surface, --text)
@@ -38,7 +38,9 @@
 
 body {
 	margin: 0;
-	background: var(--bg);
+	background:
+		radial-gradient(ellipse 60% 40% at 20% 0%, color-mix(in oklab, var(--t-primary) 14%, transparent), transparent),
+		var(--bg);
 	color: var(--text);
 	font-family: var(--t-font-body);
 	font-weight: var(--t-font-weight-thin);

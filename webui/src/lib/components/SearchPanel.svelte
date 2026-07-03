@@ -678,7 +678,11 @@
 
 	/* card */
 	.card {
-		background: color-mix(in oklab, var(--t-surface) 60%, transparent);
+		background: linear-gradient(
+			160deg,
+			color-mix(in oklab, var(--t-primary) 8%, var(--t-surface-high) 55%),
+			color-mix(in oklab, var(--t-surface) 55%, transparent) 65%
+		);
 		border: 1px solid var(--t-border);
 		border-radius: var(--t-radius);
 		padding: calc(0.75rem * var(--ui-scale));
@@ -697,7 +701,7 @@
 	.label {
 		font-family: var(--t-font-mono);
 		font-size: calc(0.68rem * var(--ui-scale));
-		font-weight: 300;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -743,15 +747,27 @@
 		gap: calc(0.4rem * var(--ui-scale));
 	}
 	h3 {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
 		margin: 0 0 calc(0.4rem * var(--ui-scale));
 		padding-bottom: calc(0.35rem * var(--ui-scale));
 		border-bottom: 1px solid var(--t-border);
 		font-family: var(--t-font-mono);
 		font-size: calc(0.72rem * var(--ui-scale));
-		font-weight: 400;
+		font-weight: 300;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);
+	}
+	h3::before {
+		content: '';
+		width: 0.3rem;
+		height: 0.3rem;
+		border-radius: 50%;
+		background: var(--t-primary);
+		box-shadow: 0 0 6px 1px color-mix(in oklab, var(--t-primary) 70%, transparent);
+		flex: 0 0 auto;
 	}
 	.compact4 h3 {
 		grid-column: 1 / -1;
@@ -760,7 +776,7 @@
 		margin: 0;
 		font-family: var(--t-font-mono);
 		font-size: calc(0.66rem * var(--ui-scale));
-		font-weight: 300;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -927,7 +943,7 @@
 		border-radius: var(--t-radius-sm);
 		font-family: var(--t-font-mono);
 		font-size: calc(0.72rem * var(--ui-scale));
-		font-weight: 300;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		cursor: pointer;
