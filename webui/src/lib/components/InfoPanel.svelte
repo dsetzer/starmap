@@ -161,7 +161,8 @@
 <style>
 	.coords {
 		font-size: calc(0.8em * var(--ui-scale));
-		color: var(--green-3);
+		color: var(--t-text);
+		opacity: 0.85;
 		margin-left: 0.5em;
 	}
 
@@ -208,10 +209,28 @@
 	ul {
 		margin: 0;
 		padding: 0;
+		list-style: none;
+		font-family: var(--t-font-body, inherit);
 	}
 	li {
+		position: relative;
+		padding-left: calc(0.9rem * var(--ui-scale));
 		line-height: calc(1.4em * var(--ui-scale));
 		word-break: break-word;
+	}
+	li::before {
+		content: '';
+		position: absolute;
+		left: 0;
+		top: calc(0.65em * var(--ui-scale));
+		width: 0.3rem;
+		height: 0.3rem;
+		border-radius: 50%;
+		background: var(--t-primary, var(--green-4));
+	}
+	li strong {
+		font-weight: 500;
+		color: var(--t-text, var(--text));
 	}
 	.color .swatch {
 		display: inline-block;

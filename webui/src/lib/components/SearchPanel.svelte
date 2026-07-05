@@ -4,7 +4,7 @@
 	import TriStateFilter from './TriStateFilter.svelte';
 	import TriPill from './TriPill.svelte';
 	import RangeSlider from 'svelte-range-slider-pips';
-	import 'svelte-range-slider-pips/dist/svelte-range-slider-pips.css';
+	import 'svelte-range-slider-pips/dist/range-slider-pips.css';
 	import {
 		Resource,
 		SearchType,
@@ -23,8 +23,6 @@
 	const types = ['Starts with', 'Contains', 'Ends with'];
 
 	const allResources = [
-		Resource.Iron,
-		Resource.Copper,
 		Resource.Coal,
 		Resource.Lead,
 		Resource.Titanium,
@@ -562,7 +560,6 @@
 						ring_filter = newValue;
 						run();
 					}}
-					yesLabel="Has"
 					className="sm"
 				/>
 			</div>
@@ -678,7 +675,11 @@
 
 	/* card */
 	.card {
-		background: color-mix(in oklab, var(--t-surface) 60%, transparent);
+		background: linear-gradient(
+			160deg,
+			color-mix(in oklab, var(--t-primary) 8%, var(--t-surface-high) 55%),
+			color-mix(in oklab, var(--t-surface) 55%, transparent) 65%
+		);
 		border: 1px solid var(--t-border);
 		border-radius: var(--t-radius);
 		padding: calc(0.75rem * var(--ui-scale));
@@ -697,7 +698,7 @@
 	.label {
 		font-family: var(--t-font-mono);
 		font-size: calc(0.68rem * var(--ui-scale));
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -718,6 +719,10 @@
 	.input::placeholder {
 		color: var(--t-text-dim);
 		opacity: 0.8;
+	}
+	.select option {
+		background: var(--t-surface-high);
+		color: var(--t-text);
 	}
 	.input:hover,
 	.select:hover {
@@ -743,15 +748,27 @@
 		gap: calc(0.4rem * var(--ui-scale));
 	}
 	h3 {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
 		margin: 0 0 calc(0.4rem * var(--ui-scale));
 		padding-bottom: calc(0.35rem * var(--ui-scale));
 		border-bottom: 1px solid var(--t-border);
 		font-family: var(--t-font-mono);
 		font-size: calc(0.72rem * var(--ui-scale));
-		font-weight: 600;
+		font-weight: 300;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);
+	}
+	h3::before {
+		content: '';
+		width: 0.3rem;
+		height: 0.3rem;
+		border-radius: 50%;
+		background: var(--t-primary);
+		box-shadow: 0 0 6px 1px color-mix(in oklab, var(--t-primary) 70%, transparent);
+		flex: 0 0 auto;
 	}
 	.compact4 h3 {
 		grid-column: 1 / -1;
@@ -760,7 +777,7 @@
 		margin: 0;
 		font-family: var(--t-font-mono);
 		font-size: calc(0.66rem * var(--ui-scale));
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -809,22 +826,17 @@
 		justify-content: flex-start;
 	}
 
-	:global(.rs .range-slider__track) {
-		background: var(--t-border) !important;
-		height: 2px;
-		border-radius: 0;
-	}
-	:global(.rs .range-slider__range) {
-		background: var(--t-primary) !important;
-	}
-	:global(.rs .range-slider__thumb) {
-		background: var(--t-primary) !important;
-		border: 2px solid var(--t-surface) !important;
-		width: 0.85rem;
-		height: 0.85rem;
-	}
-	:global(.rs .range-slider__pips) {
-		display: none;
+	:global(.rs) {
+		--range-slider: var(--t-border);
+		--range-handle-inactive: var(--t-primary);
+		--range-handle: var(--t-primary);
+		--range-handle-focus: var(--t-primary);
+		--range-handle-border: var(--t-primary);
+		--range-range-inactive: var(--t-primary);
+		--range-range: var(--t-primary);
+		--range-float-inactive: var(--t-primary);
+		--range-float: var(--t-primary);
+		--range-float-text: var(--t-primary-text);
 	}
 
 	.swatch-row {
@@ -927,7 +939,7 @@
 		border-radius: var(--t-radius-sm);
 		font-family: var(--t-font-mono);
 		font-size: calc(0.72rem * var(--ui-scale));
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		cursor: pointer;

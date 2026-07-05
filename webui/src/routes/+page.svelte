@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Universe from '$lib/Universe.svelte';
 	import { viewMatrix } from '$lib/Universe.svelte';
-	import CoordinateJump from '$lib/components/CoordinateJump.svelte';
 	import InfoPanel from '$lib/components/InfoPanel.svelte';
 	import SearchPanel from '$lib/components/SearchPanel.svelte';
 	import SearchResults from '$lib/components/SearchResults.svelte';
@@ -196,11 +195,6 @@
 		}
 	}
 
-	function jump(e: CustomEvent<{ x: number; y: number; z: number; w: number }>) {
-		selected = clampCoord(e.detail);
-		universe?.focusOnWorldCoords(selected.x, selected.y, selected.z, selected.w, 1000);
-	}
-
 	function pick(e: CustomEvent<{ x: number; y: number; z: number; w: number }>) {
 		const c = e.detail;
 		selected = clampCoord(scale < planetShowAt ? { x: c.x, y: c.y, z: 0, w: 0 } : c);
@@ -209,8 +203,6 @@
 	$: selectorTune =
 		info.Type === 'Star' || info.Type === 'BlackHole' || info.Type === 'AsteroidField' ? 0.2 : 0.07;
 </script>
-
-<CoordinateJump on:jump={jump} />
 
 {#if universe_data}
 	<Universe bind:this={universe} {universe_data} {search_results} on:worldclick={pick} />

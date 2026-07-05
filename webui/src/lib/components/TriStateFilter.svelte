@@ -38,7 +38,7 @@
 		line-height: 1;
 		font-family: var(--t-font-mono);
 		font-size: 0.72rem;
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		cursor: pointer;
@@ -65,8 +65,9 @@
 		color: var(--t-text);
 	}
 	.seg button.selected {
-		background: var(--t-primary);
+		background: linear-gradient(160deg, color-mix(in oklab, var(--t-primary) 90%, white), var(--t-primary));
 		border-color: var(--t-primary);
+		box-shadow: 0 0 8px color-mix(in oklab, var(--t-primary) 45%, transparent);
 		color: var(--t-primary-text);
 	}
 </style>

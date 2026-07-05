@@ -254,7 +254,11 @@
 		position: fixed;
 		min-width: calc(180px * var(--ui-scale));
 		max-width: calc(640px * var(--ui-scale));
-		background: color-mix(in oklab, var(--t-surface) 96%, transparent);
+		background: linear-gradient(
+			165deg,
+			color-mix(in oklab, var(--t-surface-high) 55%, var(--t-surface)),
+			var(--t-surface) 60%
+		);
 		color: var(--t-text);
 		border: 1px solid var(--t-border);
 		border-radius: calc(var(--t-radius) * var(--ui-scale));
@@ -283,13 +287,13 @@
 		cursor: move;
 		padding: calc(0.6rem * var(--ui-scale)) calc(1rem * var(--ui-scale))
 			calc(0.5rem * var(--ui-scale));
-		background: var(--t-surface-high);
+		background: linear-gradient(90deg, color-mix(in oklab, var(--t-primary) 22%, var(--t-surface-high)), var(--t-surface-high) 65%);
 		border-bottom: 1px solid var(--t-border);
 		border-radius: calc(var(--t-radius) * var(--ui-scale)) calc(var(--t-radius) * var(--ui-scale)) 0 0;
 		user-select: none;
 		font-family: var(--t-font-mono);
 		font-size: 0.78rem;
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);

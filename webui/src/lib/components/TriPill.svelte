@@ -26,7 +26,7 @@
 			</svg>
 		{/if}
 	</span>
-	{label}
+	<span class="tri-pill-label">{label}</span>
 </button>
 
 <style>
@@ -44,7 +44,14 @@
 		font-size: 0.78rem;
 		letter-spacing: 0.02em;
 		cursor: pointer;
+		min-width: 0;
 		transition: border-color 0.15s ease, background 0.15s ease;
+	}
+	.tri-pill-label {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		min-width: 0;
 	}
 	.tri-pill:hover {
 		border-color: var(--t-primary);
