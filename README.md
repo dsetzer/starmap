@@ -1,10 +1,8 @@
 # starmap
 
-starmap for the hit game waste of space on the nintendo switch
+an interactive, searchable star map for the game Waste of Space, built for desktop but also usable on consoles and mobile through the browser.
 
-credits to [dorpg](https://github.com/dorpg9) for the textures
-
-credits to [Zalander](https://github.com/anonymousomeone) for search functions
+![starmap screenshot](docs/screenshot.png)
 
 # live site
 
@@ -45,3 +43,11 @@ find your local IP address (e.g. `192.168.x.x`)
 `bun run dev -- --host`
 
 the app will be accessible from any device on your network at `http://<your-local-ip>:5173`
+
+# credits
+
+originally forked from [someoneidoknow](https://github.com/someoneidoknow)'s starmap, since heavily reworked into its own thing
+
+credits to [dorpg](https://github.com/dorpg9) for the textures
+
+credits to [Zalander](https://github.com/anonymousomeone) for search functions
