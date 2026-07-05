@@ -12,6 +12,20 @@ hosted on GitHub Pages: https://dsetzer.github.io/starmap/
 
 deploys automatically from `main` via `.github/workflows/deploy.yml`
 
+the site is a PWA — use your browser's "Install app" / "Add to Home Screen" option to install it and use it offline after the first load
+
+# desktop app
+
+the `desktop/` folder wraps the web app in Electron for a native desktop build
+
+```bash
+cd desktop
+npm install
+npm start
+```
+
+to package a distributable build: `npm run dist` (builds the web app first, then bundles it with Electron)
+
 # steps on how to run locally
 
 install bun https://bun.com/docs/installation
