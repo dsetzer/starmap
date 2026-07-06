@@ -413,7 +413,7 @@
 		};
 		let rafMove = false
 		const onMouseMove = (e: MouseEvent) => {
-			wake();
+			if (dragging) wake();
 			if (rafMove) return
 			rafMove = true
 			requestAnimationFrame(() => {
