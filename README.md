@@ -1,6 +1,6 @@
 # Starmap
 
-An interactive, searchable star map for the game **Waste of Space**. Built primarily as a desktop app, but it also works on consoles and mobile through the browser.
+A browser-based companion tool for the game **Waste of Space**. It lets you browse and search the game's universe — planets, stars, and systems — outside the game itself.
 
 ![Starmap screenshot](docs/screenshot.png)
 
