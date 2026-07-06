@@ -1,20 +1,20 @@
-# starmap
+# Starmap
 
-an interactive, searchable star map for the game Waste of Space, built for desktop but also usable on consoles and mobile through the browser.
+An interactive, searchable star map for the game **Waste of Space**. Built primarily as a desktop app, but it also works on consoles and mobile through the browser.
 
-![starmap screenshot](docs/screenshot.png)
+![Starmap screenshot](docs/screenshot.png)
 
-# live site
+## Live Site
 
-hosted on GitHub Pages: https://dsetzer.github.io/starmap/
+Hosted on GitHub Pages: https://dsetzer.github.io/starmap/
 
-deploys automatically from `main` via `.github/workflows/deploy.yml`
+Deploys automatically from `main` via `.github/workflows/deploy.yml`.
 
-the site is a PWA — use your browser's "Install app" / "Add to Home Screen" option to install it and use it offline after the first load
+The site is a PWA — use your browser's "Install app" / "Add to Home Screen" option to install it and use it offline after the first load.
 
-# desktop app
+## Desktop App
 
-the `desktop/` folder wraps the web app in Electron for a native desktop build
+The `desktop/` folder wraps the web app in Electron for a native desktop build.
 
 ```bash
 cd desktop
@@ -22,32 +22,38 @@ npm install
 npm start
 ```
 
-to package a distributable build: `npm run dist` (builds the web app first, then bundles it with Electron)
+To package a distributable build:
 
-# steps on how to run locally
+```bash
+npm run dist
+```
 
-install bun https://bun.com/docs/installation
+This builds the web app first, then bundles it with Electron.
 
-`git clone https://github.com/dsetzer/starmap.git`
+## Running Locally
 
-`cd starmap/webui`
+Install [Bun](https://bun.com/docs/installation), then:
 
-`bun install`
+```bash
+git clone https://github.com/dsetzer/starmap.git
+cd starmap/webui
+bun install
+bun run dev
+```
 
-`bun run dev`
+### Hosting on your LAN
 
-# steps on how to dev host to LAN
+Find your local IP address (e.g. `192.168.x.x`), then run:
 
-find your local IP address (e.g. `192.168.x.x`)
+```bash
+bun run dev -- --host
+```
 
-`bun run dev -- --host`
+The app will be accessible from any device on your network at `http://<your-local-ip>:5173`.
 
-the app will be accessible from any device on your network at `http://<your-local-ip>:5173`
+## Credits
 
-# credits
+Originally forked from [someoneidoknow](https://github.com/someoneidoknow)'s Starmap, since substantially reworked into its own project.
 
-originally forked from [someoneidoknow](https://github.com/someoneidoknow)'s starmap, since heavily reworked into its own thing
-
-credits to [dorpg](https://github.com/dorpg9) for the textures
-
-credits to [Zalander](https://github.com/anonymousomeone) for search functions
+- Textures by [dorpg](https://github.com/dorpg9)
+- Search functions by [Zalander](https://github.com/anonymousomeone)
