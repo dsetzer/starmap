@@ -10,7 +10,9 @@ Hosted on GitHub Pages: https://dsetzer.github.io/starmap/
 
 Deploys automatically from `main` via `.github/workflows/deploy.yml`.
 
-The site is a PWA — use your browser's "Install app" / "Add to Home Screen" option to install it and use it offline after the first load.
+## Works Offline (PWA)
+
+Starmap is a Progressive Web App. Open the live site once, then use your browser's "Install app" / "Add to Home Screen" option to install it — after that first load, it keeps working fully offline with no internet connection required.
 
 ## Desktop App
 
