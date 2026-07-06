@@ -368,6 +368,17 @@
 		let select_last = { x: 0, y: 0 };
 		let mouse_pos = { x: 0, y: 0 };
 
+		let tickerIdle = false;
+		let lastActivity = performance.now();
+		const IDLE_TIMEOUT = 1200;
+		function wake() {
+			lastActivity = performance.now();
+			if (tickerIdle) {
+				tickerIdle = false;
+				app.ticker.start();
+			}
+		}
+
 		function centerView() {
 			universe.x = app.screen.width / 2;
 			universe.y = app.screen.height / 2;
@@ -384,6 +395,7 @@
 		universe.scale.set(scale);
 
 		const onResize = () => {
+			wake();
 			centerView();
 			if (Math.abs(currentPixelRatio - window.devicePixelRatio) > 0.01) {
 				currentPixelRatio = window.devicePixelRatio;
@@ -393,6 +405,7 @@
 		window.addEventListener('resize', onResize);
 
 		const onMouseDown = (e: MouseEvent) => {
+			wake();
 			dragging = true;
 			last = { x: e.clientX, y: e.clientY };
 			select = true;
@@ -400,6 +413,7 @@
 		};
 		let rafMove = false
 		const onMouseMove = (e: MouseEvent) => {
+			wake();
 			if (rafMove) return
 			rafMove = true
 			requestAnimationFrame(() => {
@@ -442,6 +456,7 @@
 		};
 		let rafWheel = false
 		const onWheel = (e: WheelEvent) => {
+			wake();
 			if (rafWheel) return
 			rafWheel = true
 			requestAnimationFrame(() => {
@@ -468,6 +483,7 @@
 		let current_coordinates: Coordinate = { x: -100, y: -100, z: 0, w: 0 };
 		let shift_held = false;
 		const onKeyDown = (e: KeyboardEvent) => {
+			wake();
 			if (e.key === 'Shift') {
 				shift_held = true;
 				return;
@@ -541,6 +557,7 @@
 			return t.map((p) => ({ x: p.clientX, y: p.clientY }));
 		}
 		const onTouchStart = (e: TouchEvent) => {
+			wake();
 			if (e.touches.length) e.preventDefault();
 			if (e.touches.length === 1) {
 				dragging = true;
@@ -559,6 +576,7 @@
 			}
 		};
 		const onTouchMove = (e: TouchEvent) => {
+			wake();
 			if (e.touches.length) e.preventDefault();
 			if (e.touches.length === 1 && dragging) {
 				const t = e.touches[0];
@@ -1025,6 +1043,14 @@
 				fpsText.textContent = `fps ${Math.round(avg)}`;
 				fpsFrames = 0;
 				fpsLast = now;
+			}
+
+			const isAnimating = Math.abs(scale - targetScale) > 1e-4 || warps.length > 0 || dragging;
+			if (isAnimating) {
+				lastActivity = now;
+			} else if (now - lastActivity > IDLE_TIMEOUT) {
+				tickerIdle = true;
+				app.ticker.stop();
 			}
 		});
 
