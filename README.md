@@ -1,6 +1,6 @@
 # Starmap
 
-A star map for the game Waste of Space. Runs in the browser, search for planets and stars, click one to see its info.
+Browser-based star map for the Roblox game Waste of Space. Search for planets and stars, click one to see its info.
 
 ![Starmap screenshot](docs/screenshot.png)
 
@@ -56,3 +56,4 @@ The app will be accessible from any device on your network at `http://<your-loca
 - Original Starmap by [someoneidoknow](https://github.com/someoneidoknow)
 - Textures by [dorpg](https://github.com/dorpg9)
 - Search functions by [Zalander](https://github.com/anonymousomeone)
+- Universe data by ArvidSilverlock
