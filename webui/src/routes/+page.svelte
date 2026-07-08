@@ -4,6 +4,7 @@
 	import InfoPanel from '$lib/components/InfoPanel.svelte';
 	import SearchPanel from '$lib/components/SearchPanel.svelte';
 	import SearchResults from '$lib/components/SearchResults.svelte';
+	import Navbar from '$lib/components/Navbar.svelte';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { parseUniverse } from '$lib/util/universe';
 	import type { Coordinate, SearchResult, SolarSystem } from '$lib/util/types';
@@ -11,6 +12,8 @@
 	let universe_data: any = null;
 	let raw_data: any = null;
 	let internalUpdate = false;
+	let searchHidden = false;
+	let resultsHidden = false;
 
 	function parseCoordString(str: string | null): Coordinate | null {
 		if (!str) return null;
@@ -251,9 +254,17 @@
 	</svg>
 {/if}
 
-<SearchPanel bind:search_results {universe_data} />
+<Navbar
+	searchOpen={!searchHidden}
+	resultsOpen={!resultsHidden}
+	onToggleSearch={() => (searchHidden = !searchHidden)}
+	onToggleResults={() => (resultsHidden = !resultsHidden)}
+/>
+
+<SearchPanel bind:search_results bind:hidden={searchHidden} {universe_data} />
 <SearchResults
 	{search_results}
+	bind:hidden={resultsHidden}
 	on:select={(e) => {
 		selected = e.detail;
 		placed = false;

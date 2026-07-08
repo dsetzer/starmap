@@ -1065,7 +1065,9 @@
 
 <style>
 	.universe-container {
-		position: fixed;
+		/* absolute (not fixed) so it doesn't create its own stacking context and
+		   trap the overlay badges below siblings like the navbar */
+		position: absolute;
 		inset: 0;
 		width: 100vw;
 		height: 100vh;
@@ -1073,7 +1075,7 @@
 		background: #000;
 	}
 	.overlay {
-		position: absolute;
+		position: fixed;
 		color: #f8fafc;
 		font: 13px/15px ui-monospace, SFMono-Regular, monospace;
 		pointer-events: none;
@@ -1082,6 +1084,7 @@
 		border-radius: 0.65rem;
 		padding: 0.34rem 0.55rem;
 		box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+		z-index: 600;
 	}
 	.fps {
 		top: 12px;
