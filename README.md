@@ -1,22 +1,22 @@
 # Starmap
 
-A browser-based companion tool for the game **Waste of Space**. It lets you browse and search the game's universe — planets, stars, and systems — outside the game itself.
+A star map for the game Waste of Space. Runs in the browser, search for planets and stars, click one to see its info.
 
 ![Starmap screenshot](docs/screenshot.png)
 
 ## Live Site
 
-Hosted on GitHub Pages: https://dsetzer.github.io/starmap/
+https://dsetzer.github.io/starmap/
 
 Deploys automatically from `main` via `.github/workflows/deploy.yml`.
 
 ## Works Offline (PWA)
 
-Starmap is a Progressive Web App. Open the live site once, then use your browser's "Install app" / "Add to Home Screen" option to install it — after that first load, it keeps working fully offline with no internet connection required.
+It's a PWA. Open the site once, then use your browser's "Install app" / "Add to Home Screen" option. After that it works offline.
 
 ## Desktop App
 
-The `desktop/` folder wraps the web app in Electron for a native desktop build.
+`desktop/` wraps the web app in Electron.
 
 ```bash
 cd desktop
@@ -24,13 +24,11 @@ npm install
 npm start
 ```
 
-To package a distributable build:
+To build a distributable:
 
 ```bash
 npm run dist
 ```
-
-This builds the web app first, then bundles it with Electron.
 
 ## Running Locally
 
@@ -45,7 +43,7 @@ bun run dev
 
 ### Hosting on your LAN
 
-Find your local IP address (e.g. `192.168.x.x`), then run:
+Find your local IP (e.g. `192.168.x.x`), then:
 
 ```bash
 bun run dev -- --host
@@ -55,7 +53,7 @@ The app will be accessible from any device on your network at `http://<your-loca
 
 ## Credits
 
-Originally forked from [someoneidoknow](https://github.com/someoneidoknow)'s Starmap, since substantially reworked into its own project.
+Forked from [someoneidoknow](https://github.com/someoneidoknow)'s Starmap.
 
 - Textures by [dorpg](https://github.com/dorpg9)
 - Search functions by [Zalander](https://github.com/anonymousomeone)
