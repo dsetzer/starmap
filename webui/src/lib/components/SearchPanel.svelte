@@ -19,6 +19,7 @@
 	export let top = 200;
 	export let search_results: SearchResult | null = null;
 	export let universe_data: UniverseData;
+	export let hidden = false;
 
 	const types = ['Starts with', 'Contains', 'Ends with'];
 
@@ -67,7 +68,6 @@
 	let hexPickerEl: any;
 	let hexPickerSecondaryEl: any;
 	let sizeClass = '';
-	let collapsed = false;
 	let primaryPickerOpen = false;
 	let secondaryPickerOpen = false;
 	let formEl: HTMLDivElement;
@@ -128,15 +128,20 @@
 			};
 			updateMaxH();
 			window.addEventListener('resize', updateMaxH);
-			if (formEl) {
-				ro = new ResizeObserver((entries) => {
-					const w = entries[0].contentRect.width;
-					sizeClass = w < 420 ? 'xs' : w < 500 ? 'sm' : w < 660 ? 'md' : '';
-				});
-				ro.observe(formEl);
-			}
 		}
 	});
+
+	// formEl is destroyed and recreated whenever the window is collapsed and
+	// reopened, so re-attach the observer to whatever the current element is
+	// instead of only observing the one that existed at mount time.
+	$: if (formEl) {
+		ro?.disconnect();
+		ro = new ResizeObserver((entries) => {
+			const w = entries[0].contentRect.width;
+			sizeClass = w < 420 ? 'xs' : w < 500 ? 'sm' : w < 660 ? 'md' : '';
+		});
+		ro.observe(formEl);
+	}
 
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
@@ -144,13 +149,10 @@
 				spMaxHeight = window.innerHeight - 16;
 			});
 		}
-		if (ro && formEl) ro.disconnect();
+		ro?.disconnect();
 		if (searchTimeoutId !== null) {
 			clearTimeout(searchTimeoutId);
 		}
-	});
-	onDestroy(() => {
-		if (ro && formEl) ro.disconnect();
 	});
 
 	let searchTimeoutId: ReturnType<typeof setTimeout> | null = null;
@@ -288,11 +290,11 @@
 	}
 </script>
 
+{#if !hidden}
 <Window
 	bind:left
 	bind:top
-	bind:collapsed
-	collapsible={true}
+	collapsible={false}
 	minWidth={spMinWidth}
 	maxWidth={spMaxWidth}
 	width={spDefaultWidth}
@@ -605,7 +607,7 @@
 		</section>
 
 		<div class="footer">
-			<button type="button" class="footer-btn" on:click={() => (collapsed = true)}>
+			<button type="button" class="footer-btn" on:click={() => (hidden = true)}>
 				Close
 			</button>
 			<div class="footer-right">
@@ -616,6 +618,7 @@
 		</div>
 	</div>
 </Window>
+{/if}
 
 <style>
 	.form {
@@ -698,7 +701,7 @@
 	.label {
 		font-family: var(--t-font-mono);
 		font-size: calc(0.68rem * var(--ui-scale));
-		font-weight: 200;
+		font-weight: 400;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -777,7 +780,7 @@
 		margin: 0;
 		font-family: var(--t-font-mono);
 		font-size: calc(0.66rem * var(--ui-scale));
-		font-weight: 200;
+		font-weight: 400;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);

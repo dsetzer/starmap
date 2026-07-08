@@ -18,6 +18,7 @@
 	export let width = 620;
 	export let height = 600;
 	export let search_results: SearchResult | null = null;
+	export let hidden = false;
 
 	let showStars = false;
 
@@ -231,13 +232,15 @@
     }
 </script>
 
-<Window bind:left bind:top bind:width bind:height collapsible={true} minWidth={480} maxWidth={900}>
+{#if !hidden}
+<Window bind:left bind:top bind:width bind:height collapsible={false} minWidth={480} maxWidth={900}>
 	<span slot="title">Results</span>
 
 	<div class="toolbar">
 		<button class:selected={!showStars} on:click={() => (showStars = false)}>Planets</button>
 		<button class:selected={showStars} on:click={() => (showStars = true)}>Stars</button>
         <button on:click={() => downloadData()}>Export Data</button>
+		<button class="close-btn" on:click={() => (hidden = true)} aria-label="Close">✕</button>
 	</div>
 
 	<div class="counts">
@@ -382,11 +385,12 @@
 		</VirtualList>
 	{/if}
 </Window>
+{/if}
 
 <style>
 	.toolbar {
-		display: inline-grid;
-		grid-auto-flow: column;
+		display: flex;
+		align-items: center;
 		gap: 0.4rem;
 		margin: 0 0 0.6rem;
 	}
@@ -401,6 +405,9 @@
 	.toolbar button.selected {
 		background: var(--green-2);
 		border-color: var(--green-4);
+	}
+	.close-btn {
+		margin-left: auto;
 	}
 	.counts {
 		display: flex;

@@ -63,6 +63,32 @@
 	let scale = initialScale;
 	let targetScale = initialScale;
 
+	let tickerIdle = false;
+	let lastActivity = performance.now();
+	const IDLE_TIMEOUT = 1200;
+	function wake() {
+		lastActivity = performance.now();
+		if (tickerIdle && app) {
+			tickerIdle = false;
+			app.ticker.start();
+		}
+	}
+
+	let velX = 0;
+	let velY = 0;
+	let inertiaActive = false;
+	const INERTIA_DECAY = 0.05; // fraction of velocity remaining after 1 second
+
+	let flying = false;
+	let flyFromX = 0;
+	let flyFromY = 0;
+	let flyFromScale = 0;
+	let flyToX = 0;
+	let flyToY = 0;
+	let flyToScale = 0;
+	let flyStart = 0;
+	const FLY_DURATION = 650; // ms
+
 	const resLevels = [2, 1, 0.5];
 	let resIndex = 0;
 	let resButtonText = 'res x2';
@@ -124,24 +150,31 @@
 	}
 
 	export function focusOnWorldCoords(x: number, y: number, z = 0, w = 0, newScale?: number) {
-		console.log(`Focusing on world coords: ${x}, ${y}, ${z}, ${w}, ${newScale}`);
 		if (!universe || !app) return null;
+		wake();
 
-		if (newScale !== undefined) {
-			scale = Math.max(minZoom, Math.min(maxZoom, newScale));
-			targetScale = scale;
-			universe.scale.set(scale);
-		}
+		// a programmatic jump takes priority over any in-progress drag/glide
+		inertiaActive = false;
+		velX = 0;
+		velY = 0;
+
+		const nextScale =
+			newScale !== undefined ? Math.max(minZoom, Math.min(maxZoom, newScale)) : scale;
 
 		const dx = (z + 10 + 0.5) / SUBCELLS - 0.5;
 		const dy = (w + 10 + 0.5) / SUBCELLS - 0.5;
 		const wx = x + 0.5 + dx;
 		const wy = y + 0.5 + dy;
 
-		universe.x = app.screen.width / 2 - wx * scale;
-		universe.y = app.screen.height / 2 - wy * scale;
-
-		viewMatrix.set({ x: universe.x, y: universe.y, scale });
+		flyFromX = universe.x;
+		flyFromY = universe.y;
+		flyFromScale = scale;
+		flyToX = app.screen.width / 2 - wx * nextScale;
+		flyToY = app.screen.height / 2 - wy * nextScale;
+		flyToScale = nextScale;
+		targetScale = nextScale;
+		flyStart = performance.now();
+		flying = true;
 
 		return { screenX: app.screen.width / 2, screenY: app.screen.height / 2 };
 	}
@@ -187,8 +220,10 @@
 
 	$: if (search_results) {
 		should_rebuild = true;
+		wake();
 	} else if (search_results === null) {
 		should_rebuild = true;
+		wake();
 	}
 
 	onMount(async () => {
@@ -361,6 +396,7 @@
 		buildUniverseMap();
 
 		let dragging = false;
+		let lastMoveTs = performance.now();
 		let last = { x: 0, y: 0 };
 		let anchorScr = { x: 0, y: 0 };
 		let anchorWorld = { x: 0, y: 0 };
@@ -368,15 +404,10 @@
 		let select_last = { x: 0, y: 0 };
 		let mouse_pos = { x: 0, y: 0 };
 
-		let tickerIdle = false;
-		let lastActivity = performance.now();
-		const IDLE_TIMEOUT = 1200;
-		function wake() {
-			lastActivity = performance.now();
-			if (tickerIdle) {
-				tickerIdle = false;
-				app.ticker.start();
-			}
+		function releaseDrag() {
+			dragging = false;
+			inertiaActive = Math.hypot(velX, velY) > 30;
+			if (inertiaActive) wake();
 		}
 
 		function centerView() {
@@ -407,6 +438,11 @@
 		const onMouseDown = (e: MouseEvent) => {
 			wake();
 			dragging = true;
+			inertiaActive = false;
+			flying = false;
+			velX = 0;
+			velY = 0;
+			lastMoveTs = performance.now();
 			last = { x: e.clientX, y: e.clientY };
 			select = true;
 			select_last = { x: e.clientX, y: e.clientY };
@@ -419,11 +455,21 @@
 			requestAnimationFrame(() => {
 				rafMove = false
 				if (dragging) {
-					universe.x += e.clientX - last.x
-					universe.y += e.clientY - last.y
-					anchorScr.x += e.clientX - last.x
-					anchorScr.y += e.clientY - last.y
+					const dx = e.clientX - last.x
+					const dy = e.clientY - last.y
+					universe.x += dx
+					universe.y += dy
+					anchorScr.x += dx
+					anchorScr.y += dy
 					last = { x: e.clientX, y: e.clientY }
+
+					const now = performance.now()
+					const dt = Math.max(1, now - lastMoveTs) / 1000
+					const vx = dx / dt
+					const vy = dy / dt
+					velX = velX * 0.7 + vx * 0.3
+					velY = velY * 0.7 + vy * 0.3
+					lastMoveTs = now
 				}
 				const c = toUniverseCoords(e.clientX, e.clientY)
 				mouse_pos = { x: e.clientX, y: e.clientY }
@@ -441,7 +487,7 @@
 			})
 		}
 		const onMouseUp = (e: MouseEvent) => {
-			dragging = false;
+			releaseDrag();
 
 			if (select) {
 				const c = toUniverseCoords(e.clientX, e.clientY);
@@ -451,12 +497,13 @@
 			select = true;
 		};
 		const onMouseLeave = () => {
-			dragging = false;
+			releaseDrag();
 			select = true;
 		};
 		let rafWheel = false
 		const onWheel = (e: WheelEvent) => {
 			wake();
+			flying = false;
 			if (rafWheel) return
 			rafWheel = true
 			requestAnimationFrame(() => {
@@ -561,10 +608,16 @@
 			if (e.touches.length) e.preventDefault();
 			if (e.touches.length === 1) {
 				dragging = true;
+				inertiaActive = false;
+				flying = false;
+				velX = 0;
+				velY = 0;
+				lastMoveTs = performance.now();
 				last = { x: e.touches[0].clientX, y: e.touches[0].clientY };
 				select_last = { ...last };
 			} else if (e.touches.length === 2) {
 				dragging = false;
+				flying = false;
 				const [a, b] = touchInfo(e);
 				pinchDist = Math.hypot(a.x - b.x, a.y - b.y);
 				pinchStartScale = targetScale = scale;
@@ -580,11 +633,19 @@
 			if (e.touches.length) e.preventDefault();
 			if (e.touches.length === 1 && dragging) {
 				const t = e.touches[0];
-				universe.x += t.clientX - last.x;
-				universe.y += t.clientY - last.y;
-				anchorScr.x += t.clientX - last.x;
-				anchorScr.y += t.clientY - last.y;
+				const dx = t.clientX - last.x;
+				const dy = t.clientY - last.y;
+				universe.x += dx;
+				universe.y += dy;
+				anchorScr.x += dx;
+				anchorScr.y += dy;
 				last = { x: t.clientX, y: t.clientY };
+
+				const now = performance.now();
+				const dt = Math.max(1, now - lastMoveTs) / 1000;
+				velX = velX * 0.7 + (dx / dt) * 0.3;
+				velY = velY * 0.7 + (dy / dt) * 0.3;
+				lastMoveTs = now;
 			} else if (e.touches.length === 2) {
 				const [a, b] = touchInfo(e);
 				const d = Math.hypot(a.x - b.x, a.y - b.y);
@@ -603,10 +664,8 @@
 		};
 		const onTouchEnd = () => {
 			if (pinchDist && scale !== pinchStartScale) select = false;
-			if (pinchDist && (dragging || true)) {
-				dragging = false;
-				pinchDist = 0;
-			}
+			pinchDist = 0;
+			releaseDrag();
 		};
 		app.canvas.addEventListener('touchstart', onTouchStart, { passive: false });
 		app.canvas.addEventListener('touchmove', onTouchMove, { passive: false });
@@ -947,11 +1006,32 @@
 				applyResolution();
 			}
 
-			if (Math.abs(scale - targetScale) > 1e-4) {
+			if (flying) {
+				const t = Math.min(1, (now - flyStart) / FLY_DURATION);
+				const eased = 1 - Math.pow(1 - t, 3); // ease-out cubic
+				universe.x = flyFromX + (flyToX - flyFromX) * eased;
+				universe.y = flyFromY + (flyToY - flyFromY) * eased;
+				scale = flyFromScale + (flyToScale - flyFromScale) * eased;
+				universe.scale.set(scale);
+				if (t >= 1) {
+					flying = false;
+				}
+			} else if (Math.abs(scale - targetScale) > 1e-4) {
 				scale += (targetScale - scale) * (1 - Math.pow(zoomLerp, delta_time * 30));
 				universe.scale.set(scale);
 				universe.x = anchorScr.x - anchorWorld.x * scale;
 				universe.y = anchorScr.y - anchorWorld.y * scale;
+			} else if (inertiaActive && !dragging) {
+				universe.x += velX * delta_time;
+				universe.y += velY * delta_time;
+				const decay = Math.pow(INERTIA_DECAY, delta_time);
+				velX *= decay;
+				velY *= decay;
+				if (Math.hypot(velX, velY) < 5) {
+					inertiaActive = false;
+					velX = 0;
+					velY = 0;
+				}
 			}
 
 			gPlanets.visible = scale > planetShowAt;
@@ -1045,7 +1125,12 @@
 				fpsLast = now;
 			}
 
-			const isAnimating = Math.abs(scale - targetScale) > 1e-4 || warps.length > 0 || dragging;
+			const isAnimating =
+				flying ||
+				inertiaActive ||
+				Math.abs(scale - targetScale) > 1e-4 ||
+				warps.length > 0 ||
+				dragging;
 			if (isAnimating) {
 				lastActivity = now;
 			} else if (now - lastActivity > IDLE_TIMEOUT) {
@@ -1065,7 +1150,9 @@
 
 <style>
 	.universe-container {
-		position: fixed;
+		/* absolute (not fixed) so it doesn't create its own stacking context and
+		   trap the overlay badges below siblings like the navbar */
+		position: absolute;
 		inset: 0;
 		width: 100vw;
 		height: 100vh;
@@ -1073,7 +1160,7 @@
 		background: #000;
 	}
 	.overlay {
-		position: absolute;
+		position: fixed;
 		color: #f8fafc;
 		font: 13px/15px ui-monospace, SFMono-Regular, monospace;
 		pointer-events: none;
@@ -1082,6 +1169,7 @@
 		border-radius: 0.65rem;
 		padding: 0.34rem 0.55rem;
 		box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+		z-index: 600;
 	}
 	.fps {
 		top: 12px;
