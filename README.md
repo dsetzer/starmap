@@ -53,7 +53,5 @@ The app will be accessible from any device on your network at `http://<your-loca
 
 ## Credits
 
-Forked from [someoneidoknow](https://github.com/someoneidoknow)'s Starmap.
-
 - Textures by [dorpg](https://github.com/dorpg9)
 - Search functions by [Zalander](https://github.com/anonymousomeone)
