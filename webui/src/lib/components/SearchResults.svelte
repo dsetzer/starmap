@@ -14,7 +14,7 @@
 	} from '$lib/util/types';
 
 	export let left = 880;
-	export let top = 200;
+	export let top = 60;
 	export let width = 620;
 	export let height = 600;
 	export let search_results: SearchResult | null = null;

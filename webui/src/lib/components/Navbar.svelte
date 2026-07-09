@@ -55,6 +55,6 @@
 	.nav-btn.active {
 		background: var(--t-primary, var(--green-3));
 		border-color: var(--t-primary, var(--green-4));
-		color: var(--t-primary-text, var(--text));
+		color: var(--t-on-primary, var(--text));
 	}
 </style>

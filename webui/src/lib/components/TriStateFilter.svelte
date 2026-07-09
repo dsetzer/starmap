@@ -68,6 +68,6 @@
 		background: linear-gradient(160deg, color-mix(in oklab, var(--t-primary) 90%, white), var(--t-primary));
 		border-color: var(--t-primary);
 		box-shadow: 0 0 8px color-mix(in oklab, var(--t-primary) 45%, transparent);
-		color: var(--t-primary-text);
+		color: var(--t-on-primary);
 	}
 </style>
