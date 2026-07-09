@@ -37,7 +37,7 @@
 	.nav-btn {
 		font-family: var(--t-font-mono, ui-monospace, monospace);
 		font-size: 0.72rem;
-		font-weight: 200;
+		font-weight: 500;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		padding: 0.4rem 1rem;
