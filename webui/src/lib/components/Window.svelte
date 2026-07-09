@@ -265,6 +265,8 @@
 <style>
 	.panel {
 		position: fixed;
+		display: flex;
+		flex-direction: column;
 		min-width: calc(180px * var(--ui-scale));
 		max-width: calc(640px * var(--ui-scale));
 		background: linear-gradient(
@@ -290,11 +292,15 @@
 	}
 	.panel .body {
 		overflow: auto;
-		height: 100%;
+		/* fill exactly the space left under the header so the bottom of the
+		   content is never clipped by the panel's overflow: hidden */
+		flex: 1 1 auto;
+		min-height: 0;
 		box-sizing: border-box;
 	}
 	.header {
 		display: flex;
+		flex: 0 0 auto;
 		justify-content: space-between;
 		align-items: center;
 		cursor: move;
