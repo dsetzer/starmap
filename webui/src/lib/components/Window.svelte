@@ -19,6 +19,7 @@
 	let startW = 0;
 	let startH = 0;
 	let dir = '';
+	let userResized = false;
 	let panelEl: HTMLDivElement;
 	let headerEl: HTMLDivElement;
 	let effMinW = 0,
@@ -70,6 +71,7 @@
 	function resizeStart(e: MouseEvent, d: string) {
 		if (collapsed && (d.includes('n') || d.includes('s'))) return;
 		e.stopPropagation();
+		if (d.includes('n') || d.includes('s')) userResized = true;
 		dir = d;
 		uiScale = readScale();
 		startX = e.clientX;
@@ -160,11 +162,9 @@
 		if (headerEl) headerHeight = headerEl.offsetHeight;
 	
 		const checkHeight = () => {
-			if (!collapsed && !height && panelEl) {
-				const mh = maxHeight;
-				if (mh !== undefined && panelEl.scrollHeight > mh) {
-					height = mh;
-				}
+			if (!collapsed && !userResized && panelEl) {
+				const mh = effectiveMaxHeight();
+				height = panelEl.scrollHeight > mh ? mh : undefined;
 			}
 			enforceBounds();
 		};
@@ -199,6 +199,19 @@
 		if (top < 0) top = 0;
 		const maxTop = vh - 40;
 		if (top > maxTop) top = maxTop;
+
+		if (!collapsed && height !== undefined) {
+			const mh = effectiveMaxHeight();
+			if (height > mh) height = mh;
+		}
+	}
+
+	// the tallest the panel can be without running past the bottom of the
+	// viewport, given where it's currently positioned
+	function effectiveMaxHeight() {
+		if (typeof window === 'undefined') return maxHeight ?? Infinity;
+		const fitsInViewport = window.innerHeight - top - 8;
+		return Math.max(minHeight ?? 120, Math.min(maxHeight ?? Infinity, fitsInViewport));
 	}
 </script>
 

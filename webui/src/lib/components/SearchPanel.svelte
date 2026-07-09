@@ -16,7 +16,7 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	export let left = 200;
-	export let top = 200;
+	export let top = 10;
 	export let search_results: SearchResult | null = null;
 	export let universe_data: UniverseData;
 	export let hidden = false;
@@ -124,7 +124,7 @@
 			await import('vanilla-colorful/hex-color-picker.js');
 			colorPickerReady = true;
 			const updateMaxH = () => {
-				spMaxHeight = window.innerHeight - 16;
+				spMaxHeight = window.innerHeight - 8;
 			};
 			updateMaxH();
 			window.addEventListener('resize', updateMaxH);
@@ -146,7 +146,7 @@
 	onDestroy(() => {
 		if (typeof window !== 'undefined') {
 			window.removeEventListener('resize', () => {
-				spMaxHeight = window.innerHeight - 16;
+				spMaxHeight = window.innerHeight - 8;
 			});
 		}
 		ro?.disconnect();
@@ -701,7 +701,7 @@
 	.label {
 		font-family: var(--t-font-mono);
 		font-size: calc(0.68rem * var(--ui-scale));
-		font-weight: 400;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -780,7 +780,7 @@
 		margin: 0;
 		font-family: var(--t-font-mono);
 		font-size: calc(0.66rem * var(--ui-scale));
-		font-weight: 400;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -839,7 +839,7 @@
 		--range-range: var(--t-primary);
 		--range-float-inactive: var(--t-primary);
 		--range-float: var(--t-primary);
-		--range-float-text: var(--t-primary-text);
+		--range-float-text: var(--t-on-primary);
 	}
 
 	.swatch-row {
@@ -915,8 +915,13 @@
 		display: flex;
 		justify-content: space-between;
 		align-items: center;
-		padding-top: calc(0.6rem * var(--ui-scale));
-		border-top: 1px solid var(--t-border);
+		position: sticky;
+		bottom: 0;
+		margin-left: calc(-1.8rem * var(--ui-scale));
+		margin-right: calc(-1rem * var(--ui-scale));
+		padding: calc(0.6rem * var(--ui-scale)) calc(1rem * var(--ui-scale)) calc(0.8rem * var(--ui-scale))
+			calc(1.8rem * var(--ui-scale));
+		background: color-mix(in oklab, var(--t-surface) 92%, var(--t-surface-high));
 	}
 	.footer-right {
 		display: flex;

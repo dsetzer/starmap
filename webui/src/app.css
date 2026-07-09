@@ -10,6 +10,7 @@
 	--t-text-dim: #b7cbe8;
 	--t-primary: #7c8bff;
 	--t-primary-text: #eceaff;
+	--t-on-primary: #0a0e2e;
 	--t-secondary: #bcff5f;
 	--t-error: #ff6b6b;
 	--t-radius: 0.375rem;
@@ -61,7 +62,7 @@ body {
 	border: none;
 	border-radius: var(--t-radius);
 	background: var(--t-primary);
-	color: var(--t-primary-text);
+	color: var(--t-on-primary);
 	cursor: pointer;
 	transition: background 0.2s;
 }

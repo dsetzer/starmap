@@ -152,8 +152,23 @@
 	function place(v: { x: number; y: number; scale: number }) {
 		if (placed) return;
 		const p = toScreen(selected, v);
-		panelX = Math.max(0, p.x + 24);
-		panelY = Math.max(0, p.y);
+
+		// conservative estimate of the info panel's footprint, used to keep it
+		// fully on screen — flip to the other side of the point if it would
+		// otherwise run past the right or bottom edge of the viewport
+		const estW = 380;
+		const estH = 480;
+		const vw = typeof window !== 'undefined' ? window.innerWidth : Infinity;
+		const vh = typeof window !== 'undefined' ? window.innerHeight : Infinity;
+
+		let x = p.x + 24;
+		let y = p.y;
+
+		if (x + estW > vw) x = p.x - estW - 24;
+		if (y + estH > vh) y = vh - estH - 16;
+
+		panelX = Math.max(0, x);
+		panelY = Math.max(0, y);
 		placed = true;
 	}
 
