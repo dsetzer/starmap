@@ -283,6 +283,8 @@
 		font-family: var(--t-font-body);
 		transform: scale(var(--ui-scale));
 		transform-origin: top left;
+		will-change: transform;
+		backface-visibility: hidden;
 	}
 	.panel :global(.unscaled) {
 		transform: scale(calc(1 / var(--ui-scale)));
@@ -292,6 +294,10 @@
 	}
 	.panel .body {
 		overflow: auto;
+		/* scrolling inside a scaled ancestor (.panel has transform: scale())
+		   makes Chromium/Firefox mis-rasterize tiles during scroll+resize,
+		   showing up as black boxes; forcing its own compositing layer fixes it */
+		will-change: transform;
 		/* fill exactly the space left under the header so the bottom of the
 		   content is never clipped by the panel's overflow: hidden */
 		flex: 1 1 auto;
@@ -312,7 +318,7 @@
 		user-select: none;
 		font-family: var(--t-font-mono);
 		font-size: 0.78rem;
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);
