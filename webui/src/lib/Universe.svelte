@@ -239,7 +239,11 @@
 			backgroundColor: 0x000000,
 			antialias: false,
 			resolution: window.devicePixelRatio * resLevels[resIndex],
-			autoDensity: true
+			autoDensity: true,
+			// keep the last rendered frame in the canvas buffer; without this the
+			// browser can discard it while the ticker is idle-paused, causing
+			// black flickering whenever the page recomposites
+			preserveDrawingBuffer: true
 		});
 		container.appendChild(app.canvas);
 		resButtonText = `res x${resLevels[resIndex]}`;
