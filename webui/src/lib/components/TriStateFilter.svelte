@@ -38,7 +38,7 @@
 		line-height: 1;
 		font-family: var(--t-font-mono);
 		font-size: 0.72rem;
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		cursor: pointer;

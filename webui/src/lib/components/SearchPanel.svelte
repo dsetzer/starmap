@@ -701,7 +701,7 @@
 	.label {
 		font-family: var(--t-font-mono);
 		font-size: calc(0.68rem * var(--ui-scale));
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -759,7 +759,7 @@
 		border-bottom: 1px solid var(--t-border);
 		font-family: var(--t-font-mono);
 		font-size: calc(0.72rem * var(--ui-scale));
-		font-weight: 500;
+		font-weight: 300;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);
@@ -780,7 +780,7 @@
 		margin: 0;
 		font-family: var(--t-font-mono);
 		font-size: calc(0.66rem * var(--ui-scale));
-		font-weight: 500;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-text-dim);
@@ -947,7 +947,7 @@
 		border-radius: var(--t-radius-sm);
 		font-family: var(--t-font-mono);
 		font-size: calc(0.72rem * var(--ui-scale));
-		font-weight: 400;
+		font-weight: 200;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		cursor: pointer;
