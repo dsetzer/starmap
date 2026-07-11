@@ -413,12 +413,10 @@
 		display: flex;
 		gap: 0.8rem;
 		font-size: 0.72rem;
-		opacity: 0.8;
 		margin: -0.3rem 0 0.4rem;
 	}
 	.empty {
 		font-size: 0.8rem;
-		opacity: 0.7;
 		padding: 0.25rem 0;
 	}
 	.row {
@@ -456,12 +454,10 @@
 	.row .type,
 	.row .size {
 		font-size: 0.7rem;
-		opacity: 0.85;
 	}
 	.row .coord {
 		font-size: 0.75rem;
 		font-family: monospace;
-		opacity: 0.8;
 		margin-right: 0.35rem;
 	}
 	.row .size {

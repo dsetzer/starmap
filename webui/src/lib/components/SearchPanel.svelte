@@ -16,7 +16,7 @@
 	import { onMount, onDestroy } from 'svelte';
 
 	export let left = 200;
-	export let top = 10;
+	export let top = 56;
 	export let search_results: SearchResult | null = null;
 	export let universe_data: UniverseData;
 	export let hidden = false;
@@ -721,7 +721,6 @@
 	}
 	.input::placeholder {
 		color: var(--t-text-dim);
-		opacity: 0.8;
 	}
 	.select option {
 		background: var(--t-surface-high);
@@ -788,7 +787,7 @@
 
 	.pill-wrap {
 		display: grid;
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(3, minmax(min-content, 1fr));
 		gap: 0.4rem;
 	}
 	.pill-wrap :global(.tri-pill) {
@@ -796,21 +795,21 @@
 		justify-content: flex-start;
 	}
 	.form.md .pill-wrap {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(3, minmax(min-content, 1fr));
 	}
 	.form.sm .pill-wrap {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
+		grid-template-columns: repeat(3, minmax(min-content, 1fr));
 	}
 	.form.xs .pill-wrap {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
+		grid-template-columns: repeat(2, minmax(min-content, 1fr));
 	}
 	.star-grid {
 		display: grid;
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, minmax(min-content, 1fr));
 		gap: 0.3rem;
 	}
 	.form.md .star-grid {
-		grid-template-columns: repeat(3, 1fr);
+		grid-template-columns: repeat(3, minmax(min-content, 1fr));
 	}
 	.form.sm .star-grid {
 		grid-template-columns: repeat(3, 1fr);

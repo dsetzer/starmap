@@ -11,6 +11,7 @@
 	export let minHeight: number | undefined = undefined;
 	export let maxHeight: number | undefined = undefined;
 	export let autoWidth = false;
+	export let zIndex = 900;
 
 	let startX = 0;
 	let startY = 0;
@@ -226,6 +227,7 @@
 	style:height={collapsed ? headerHeight + 'px' : height ? height + 'px' : undefined}
 	style:min-height={collapsed ? headerHeight + 'px' : minHeight ? minHeight + 'px' : undefined}
 	style:max-height={collapsed ? headerHeight + 'px' : maxHeight ? maxHeight + 'px' : undefined}
+	style:z-index={zIndex}
 >
 	<div bind:this={headerEl} class="header" role="toolbar" tabindex="0" on:mousedown={dragStart}>
 		<slot name="title"></slot>

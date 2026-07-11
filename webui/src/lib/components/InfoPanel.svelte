@@ -67,7 +67,7 @@
 	}
 </script>
 
-<Window bind:left bind:top autoWidth={true}>
+<Window bind:left bind:top autoWidth={true} zIndex={950}>
 	<span slot="title">
 		{#key JSON.stringify(info)}
 			<Planet {info} />
