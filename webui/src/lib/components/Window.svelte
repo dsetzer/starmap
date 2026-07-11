@@ -292,10 +292,6 @@
 	}
 	.panel .body {
 		overflow: auto;
-		/* scrolling inside a scaled ancestor (.panel has transform: scale())
-		   can make Chromium/Firefox mis-rasterize tiles; contain: paint keeps
-		   repaint scoped to this element instead of leaking into siblings */
-		contain: paint;
 		/* fill exactly the space left under the header so the bottom of the
 		   content is never clipped by the panel's overflow: hidden */
 		flex: 1 1 auto;
@@ -316,7 +312,7 @@
 		user-select: none;
 		font-family: var(--t-font-mono);
 		font-size: 0.78rem;
-		font-weight: 200;
+		font-weight: 500;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);
