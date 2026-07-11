@@ -8,8 +8,6 @@ Browser-based star map for the Roblox game Waste of Space. Search for planets an
 
 https://dsetzer.github.io/starmap/
 
-Deploys automatically from `main` via `.github/workflows/deploy.yml`.
-
 ## Works Offline (PWA)
 
 It's a PWA. Open the site once, then use your browser's "Install app" / "Add to Home Screen" option. After that it works offline.
