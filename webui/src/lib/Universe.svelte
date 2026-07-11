@@ -416,8 +416,9 @@
 		}
 		centerView();
 
-		// fit the initial view to the window instead of starting fully zoomed out
-		const worldSpan = 216; // universe coords span roughly -100..100 plus padding
+		// start zoomed in on a portion of the map instead of fitting the
+		// entire universe span into the window
+		const worldSpan = 54;
 		const fitScale = Math.max(
 			minZoom,
 			Math.min(maxZoom, Math.min(app.screen.width, app.screen.height) / worldSpan)
