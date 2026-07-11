@@ -417,7 +417,8 @@
 		centerView();
 
 		const worldSpan = 54;
-		scale = targetScale = Math.max(minZoom, Math.min(maxZoom, app.screen.width / worldSpan));
+		const screenDim = Math.max(app.screen.width, app.screen.height);
+		scale = targetScale = Math.max(minZoom, Math.min(maxZoom, screenDim / worldSpan));
 		universe.scale.set(scale);
 
 		const onResize = () => {
