@@ -414,17 +414,20 @@
 			universe.x = app.screen.width / 2;
 			universe.y = app.screen.height / 2;
 		}
-		centerView();
 
-		// start zoomed in on a portion of the map instead of fitting the
-		// entire universe span into the window
-		const worldSpan = 54;
-		const fitScale = Math.max(
-			minZoom,
-			Math.min(maxZoom, Math.min(app.screen.width, app.screen.height) / worldSpan)
-		);
-		scale = targetScale = fitScale;
-		universe.scale.set(scale);
+		function fitInitialView() {
+			// use the container's actual measured size rather than app.screen,
+			// which can still reflect a stale size immediately after init
+			const w = container.clientWidth || app.screen.width;
+			const h = container.clientHeight || app.screen.height;
+			const worldSpan = 54;
+			const fitScale = Math.max(minZoom, Math.min(maxZoom, Math.min(w, h) / worldSpan));
+			scale = targetScale = fitScale;
+			universe.scale.set(scale);
+			centerView();
+		}
+		fitInitialView();
+		requestAnimationFrame(fitInitialView);
 
 		const onResize = () => {
 			wake();
