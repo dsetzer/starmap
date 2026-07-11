@@ -13,7 +13,7 @@
 	let raw_data: any = null;
 	let internalUpdate = false;
 	let searchHidden = false;
-	let resultsHidden = false;
+	let resultsHidden = true;
 
 	function parseCoordString(str: string | null): Coordinate | null {
 		if (!str) return null;

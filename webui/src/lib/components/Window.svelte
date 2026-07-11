@@ -11,6 +11,7 @@
 	export let minHeight: number | undefined = undefined;
 	export let maxHeight: number | undefined = undefined;
 	export let autoWidth = false;
+	export let zIndex = 900;
 
 	let startX = 0;
 	let startY = 0;
@@ -28,17 +29,8 @@
 		effMaxH: number | undefined;
 	let savedHeight = 0;
 	let headerHeight = 0;
-	let uiScale = 1;
-
-	function readScale() {
-		if (typeof window === 'undefined') return 1;
-		const v = getComputedStyle(document.documentElement).getPropertyValue('--ui-scale').trim();
-		const n = parseFloat(v);
-		return isNaN(n) ? 1 : n;
-	}
 
 	function dragStart(e: MouseEvent) {
-		uiScale = readScale();
 		startX = e.clientX;
 		startY = e.clientY;
 		baseL = left;
@@ -73,7 +65,6 @@
 		e.stopPropagation();
 		if (d.includes('n') || d.includes('s')) userResized = true;
 		dir = d;
-		uiScale = readScale();
 		startX = e.clientX;
 		startY = e.clientY;
 		baseL = left;
@@ -106,35 +97,31 @@
 	function resizeMove(e: MouseEvent) {
 		const dxScreen = e.clientX - startX;
 		const dyScreen = e.clientY - startY;
-		const dxInternal = dxScreen / uiScale;
-		const dyInternal = dyScreen / uiScale;
 		let newW = startW;
 		let newH = startH;
 		let newL = baseL;
 		let newT = baseT;
 
 		if (dir.includes('e')) {
-			newW = clamp(startW + dxInternal, effMinW, effMaxW);
+			newW = clamp(startW + dxScreen, effMinW, effMaxW);
 		}
 		if (dir.includes('s')) {
-			newH = clamp(startH + dyInternal, effMinH, effMaxH);
+			newH = clamp(startH + dyScreen, effMinH, effMaxH);
 		}
 		if (dir.includes('w')) {
-			const desired = startW - dxInternal;
+			const desired = startW - dxScreen;
 			if (effMaxW !== undefined && desired >= effMaxW) {
 				newW = effMaxW;
-				newL = baseL + (startW - effMaxW) * uiScale;
+				newL = baseL + (startW - effMaxW);
 			} else {
 				newW = clamp(desired, effMinW, effMaxW);
-				const internalDelta = startW - newW;
-				newL = baseL + internalDelta * uiScale;
+				newL = baseL + (startW - newW);
 			}
 		}
 		if (dir.includes('n')) {
-			const raw = startH - dyInternal;
+			const raw = startH - dyScreen;
 			newH = clamp(raw, effMinH, effMaxH);
-			const internalDelta = startH - newH;
-			newT = baseT + internalDelta * uiScale;
+			newT = baseT + (startH - newH);
 		}
 		
 		left = newL;
@@ -226,6 +213,7 @@
 	style:height={collapsed ? headerHeight + 'px' : height ? height + 'px' : undefined}
 	style:min-height={collapsed ? headerHeight + 'px' : minHeight ? minHeight + 'px' : undefined}
 	style:max-height={collapsed ? headerHeight + 'px' : maxHeight ? maxHeight + 'px' : undefined}
+	style:z-index={zIndex}
 >
 	<div bind:this={headerEl} class="header" role="toolbar" tabindex="0" on:mousedown={dragStart}>
 		<slot name="title"></slot>
@@ -281,23 +269,12 @@
 		overflow: hidden;
 		z-index: 900;
 		font-family: var(--t-font-body);
-		transform: scale(var(--ui-scale));
-		transform-origin: top left;
-		will-change: transform;
-		backface-visibility: hidden;
 	}
 	.panel :global(.unscaled) {
-		transform: scale(calc(1 / var(--ui-scale)));
-		transform-origin: left top;
-		width: calc(100% * var(--ui-scale));
 		display: block;
 	}
 	.panel .body {
 		overflow: auto;
-		/* scrolling inside a scaled ancestor (.panel has transform: scale())
-		   makes Chromium/Firefox mis-rasterize tiles during scroll+resize,
-		   showing up as black boxes; forcing its own compositing layer fixes it */
-		will-change: transform;
 		/* fill exactly the space left under the header so the bottom of the
 		   content is never clipped by the panel's overflow: hidden */
 		flex: 1 1 auto;
@@ -318,7 +295,7 @@
 		user-select: none;
 		font-family: var(--t-font-mono);
 		font-size: 0.78rem;
-		font-weight: 200;
+		font-weight: 500;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);
