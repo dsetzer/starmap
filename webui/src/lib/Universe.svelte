@@ -63,14 +63,19 @@
 	let scale = initialScale;
 	let targetScale = initialScale;
 
-	let tickerIdle = false;
+	// fully stopping/starting the ticker on idle raced with PixiJS's resize
+	// handling and caused black rendering artifacts. Throttling the frame
+	// rate instead keeps the loop running (no race) while still cutting CPU
+	// use way down when nothing is happening on screen.
+	let isIdle = false;
 	let lastActivity = performance.now();
 	const IDLE_TIMEOUT = 1200;
+	const IDLE_FPS = 5;
 	function wake() {
 		lastActivity = performance.now();
-		if (tickerIdle && app) {
-			tickerIdle = false;
-			app.ticker.start();
+		if (isIdle && app) {
+			isIdle = false;
+			app.ticker.maxFPS = 0;
 		}
 	}
 
@@ -242,6 +247,7 @@
 			autoDensity: true
 		});
 		container.appendChild(app.canvas);
+		app.canvas.style.cursor = 'grab';
 		resButtonText = `res x${resLevels[resIndex]}`;
 		currentPixelRatio = window.devicePixelRatio;
 
@@ -356,9 +362,12 @@
 		universe.addChild(backgroundSprite);
 		app.stage.addChild(universe);
 
+		// both grids live inside the universe container and are drawn in world
+		// coordinates, so panning/zooming moves them via the container
+		// transform instead of requiring a rebuild every frame
 		const gStarGrid = new PIXI.Graphics();
 		const gPlanetGrid = new PIXI.Graphics();
-		app.stage.addChild(gStarGrid);
+		universe.addChild(gStarGrid);
 		universe.addChild(gPlanetGrid);
 
 		const bodies = new PIXI.Container();
@@ -374,6 +383,7 @@
 
 		const gWarps = new PIXI.Graphics();
 		app.stage.addChild(gWarps);
+		let gWarpsHadContent = false;
 
 		// build universe hashmap for fast lookup idk
 		let universe_map: Map<string, Planet | Star> = new Map();
@@ -406,6 +416,7 @@
 
 		function releaseDrag() {
 			dragging = false;
+			app.canvas.style.cursor = 'grab';
 			inertiaActive = Math.hypot(velX, velY) > 30;
 			if (inertiaActive) wake();
 		}
@@ -416,13 +427,9 @@
 		}
 		centerView();
 
-		// fit the initial view to the window instead of starting fully zoomed out
-		const worldSpan = 216; // universe coords span roughly -100..100 plus padding
-		const fitScale = Math.max(
-			minZoom,
-			Math.min(maxZoom, Math.min(app.screen.width, app.screen.height) / worldSpan)
-		);
-		scale = targetScale = fitScale;
+		const worldSpan = 150;
+		const screenDim = Math.max(app.screen.width, app.screen.height);
+		scale = targetScale = Math.max(minZoom, Math.min(maxZoom, screenDim / worldSpan));
 		universe.scale.set(scale);
 
 		const onResize = () => {
@@ -438,6 +445,7 @@
 		const onMouseDown = (e: MouseEvent) => {
 			wake();
 			dragging = true;
+			app.canvas.style.cursor = 'grabbing';
 			inertiaActive = false;
 			flying = false;
 			velX = 0;
@@ -682,9 +690,16 @@
 
 		let previous_time = performance.now();
 
-		let starViewKey = '';
-		let planetViewKey = '';
-		let gridViewKey = '';
+		// bounds of the padded region the layers were last built for; layers
+		// only rebuild when the view escapes this region or the zoom tier
+		// changes, so panning is a pure GPU transform between rebuilds
+		let builtMinX = Infinity;
+		let builtMinY = Infinity;
+		let builtMaxX = -Infinity;
+		let builtMaxY = -Infinity;
+		let builtStep = -1;
+		let builtDetail = -1;
+		let builtGridStep = -1;
 
 		function pickStarTextureName(star: Star): string | null {
 			const key = StarType[star.type] as string;
@@ -960,14 +975,12 @@
 			gStarGrid.clear();
 			gStarGrid.alpha = gridAlpha;
 			for (let x = universe_size.x; x <= universe_size.w + universe_size.x; x += step) {
-				const gx = x * scale + universe.x;
-				gStarGrid.moveTo(gx, universe_size.y * scale + universe.y);
-				gStarGrid.lineTo(gx, (universe_size.h + universe_size.y) * scale + universe.y);
+				gStarGrid.moveTo(x, universe_size.y);
+				gStarGrid.lineTo(x, universe_size.h + universe_size.y);
 			}
 			for (let y = universe_size.y; y <= universe_size.h + universe_size.y; y += step) {
-				const gy = y * scale + universe.y;
-				gStarGrid.moveTo(universe_size.x * scale + universe.x, gy);
-				gStarGrid.lineTo((universe_size.w + universe_size.x) * scale + universe.x, gy);
+				gStarGrid.moveTo(universe_size.x, y);
+				gStarGrid.lineTo(universe_size.w + universe_size.x, y);
 			}
 			gStarGrid.stroke({ width: 1, color: 0xffffff, pixelLine: true });
 		}
@@ -1047,26 +1060,32 @@
 			const visMinY = -universe.y / scale - 1;
 			const visMaxY = (app.screen.height - universe.y) / scale + 1;
 
-			const newStarKey = `${step}:${Math.floor(visMinX)}:${Math.floor(visMinY)}:${Math.floor(visMaxX)}:${Math.floor(visMaxY)}:${DETAIL}`;
-			if (newStarKey !== starViewKey || should_rebuild) {
-				starViewKey = newStarKey;
-				rebuildStars(visMinX, visMinY, visMaxX, visMaxY, sFactor);
+			const force = should_rebuild;
+			should_rebuild = false;
+
+			const escaped =
+				visMinX < builtMinX || visMinY < builtMinY || visMaxX > builtMaxX || visMaxY > builtMaxY;
+			if (force || escaped || step !== builtStep || DETAIL !== builtDetail) {
+				const padX = (visMaxX - visMinX) * 0.2;
+				const padY = (visMaxY - visMinY) * 0.2;
+				builtMinX = visMinX - padX;
+				builtMinY = visMinY - padY;
+				builtMaxX = visMaxX + padX;
+				builtMaxY = visMaxY + padY;
+				builtStep = step;
+				builtDetail = DETAIL;
+				rebuildStars(builtMinX, builtMinY, builtMaxX, builtMaxY, sFactor);
+				if (gPlanets.visible) rebuildPlanets(builtMinX, builtMinY, builtMaxX, builtMaxY);
+				rebuildPlanetGrid(builtMinX, builtMinY, builtMaxX, builtMaxY);
 			}
 
-			const planetKey = `${DETAIL}:${Math.floor(visMinX * 2)}:${Math.floor(visMinY * 2)}:${Math.floor(visMaxX * 2)}:${Math.floor(visMaxY * 2)}`;
-			if (planetKey !== planetViewKey || should_rebuild) {
-				planetViewKey = planetKey;
-				rebuildPlanets(visMinX, visMinY, visMaxX, visMaxY);
-				should_rebuild = false; // possible race condition?
-			}
-
-			const gridKey = `${step}:${scale.toFixed(2)}:${universe.x.toFixed(1)}:${universe.y.toFixed(1)}`;
-			if (gridKey !== gridViewKey) {
-				gridViewKey = gridKey;
+			if (step !== builtGridStep) {
+				builtGridStep = step;
 				rebuildGrid(step);
-				rebuildPlanetGrid(visMinX, visMinY, visMaxX, visMaxY);
 			}
 
+			if (warps.length > 0 || gWarpsHadContent) {
+			gWarpsHadContent = warps.length > 0;
 			gWarps.clear();
 			const screenW = app.screen.width,
 				screenH = app.screen.height;
@@ -1116,6 +1135,7 @@
 				}
 			}
 			gWarps.stroke({ width: 2, color: 0xff3333, pixelLine: true });
+			}
 
 			fpsFrames++;
 			if (now - fpsLast >= 1000) {
@@ -1133,9 +1153,9 @@
 				dragging;
 			if (isAnimating) {
 				lastActivity = now;
-			} else if (now - lastActivity > IDLE_TIMEOUT) {
-				tickerIdle = true;
-				app.ticker.stop();
+			} else if (!isIdle && now - lastActivity > IDLE_TIMEOUT) {
+				isIdle = true;
+				app.ticker.maxFPS = IDLE_FPS;
 			}
 		});
 

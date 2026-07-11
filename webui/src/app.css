@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600&display=swap');
 
 :root {
 	/* Tactical Minimalist palette */
@@ -18,7 +18,7 @@
 	--t-font-head: 'Exo 2', system-ui, sans-serif;
 	--t-font-body: 'Exo 2', system-ui, sans-serif;
 	--t-font-mono: 'Exo 2', system-ui, sans-serif;
-	--t-font-weight-thin: 200;
+	--t-font-weight-thin: 400;
 
 	/* legacy theme vars, mapped onto the tactical palette so existing
 	   components (which still reference --green-N, --bg, --surface, --text)
@@ -32,7 +32,9 @@
 	--bg: var(--t-bg);
 	--surface: var(--t-surface);
 	--text: var(--t-text);
-	--ui-scale: 0.98;
+	/* kept at 1 — shrinking the UI on shorter screens made the small labels
+	   unreadable; panels scroll and resize instead */
+	--ui-scale: 1;
 
 	color-scheme: dark;
 }
@@ -47,14 +49,6 @@ body {
 	font-weight: var(--t-font-weight-thin);
 	font-size: calc(16px * var(--ui-scale));
 	line-height: 1.15;
-}
-
-@media (max-height: 1080px) {
-	:root { --ui-scale: 0.9; }
-}
-
-@media (max-height: 800px) {
-	:root { --ui-scale: 0.8; }
 }
 
 .btn {
