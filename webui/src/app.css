@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@200;300;400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600&display=swap');
 
 :root {
 	/* Tactical Minimalist palette */
@@ -18,7 +18,7 @@
 	--t-font-head: 'Exo 2', system-ui, sans-serif;
 	--t-font-body: 'Exo 2', system-ui, sans-serif;
 	--t-font-mono: 'Exo 2', system-ui, sans-serif;
-	--t-font-weight-thin: 200;
+	--t-font-weight-thin: 400;
 
 	/* legacy theme vars, mapped onto the tactical palette so existing
 	   components (which still reference --green-N, --bg, --surface, --text)
