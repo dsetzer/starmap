@@ -63,16 +63,11 @@
 	let scale = initialScale;
 	let targetScale = initialScale;
 
-	let tickerIdle = false;
-	let lastActivity = performance.now();
-	const IDLE_TIMEOUT = 1200;
-	function wake() {
-		lastActivity = performance.now();
-		if (tickerIdle && app) {
-			tickerIdle = false;
-			app.ticker.start();
-		}
-	}
+	// the ticker used to stop entirely after a period of inactivity to save
+	// CPU, but starting/stopping it raced with PixiJS's resize handling and
+	// caused black rendering artifacts; keeping it always running is more
+	// reliable, so this is now a no-op kept for existing call sites
+	function wake() {}
 
 	let velX = 0;
 	let velY = 0;
@@ -416,7 +411,7 @@
 		}
 		centerView();
 
-		const worldSpan = 54;
+		const worldSpan = 150;
 		const screenDim = Math.max(app.screen.width, app.screen.height);
 		scale = targetScale = Math.max(minZoom, Math.min(maxZoom, screenDim / worldSpan));
 		universe.scale.set(scale);
@@ -1121,18 +1116,6 @@
 				fpsLast = now;
 			}
 
-			const isAnimating =
-				flying ||
-				inertiaActive ||
-				Math.abs(scale - targetScale) > 1e-4 ||
-				warps.length > 0 ||
-				dragging;
-			if (isAnimating) {
-				lastActivity = now;
-			} else if (now - lastActivity > IDLE_TIMEOUT) {
-				tickerIdle = true;
-				app.ticker.stop();
-			}
 		});
 
 	});
