@@ -74,7 +74,7 @@
 	let ro: ResizeObserver | null = null;
 	let spMaxHeight: number | undefined;
 	const spMinWidth = 360;
-	const spDefaultWidth = 720;
+	const spDefaultWidth = 780;
 	const spMaxWidth = 960;
 	function normalizeColor(v: string): string | '' {
 		if (!v) return '';
@@ -138,7 +138,7 @@
 		ro?.disconnect();
 		ro = new ResizeObserver((entries) => {
 			const w = entries[0].contentRect.width;
-			sizeClass = w < 420 ? 'xs' : w < 500 ? 'sm' : w < 660 ? 'md' : '';
+			sizeClass = w < 420 ? 'xs' : w < 500 ? 'sm' : w < 710 ? 'md' : '';
 		});
 		ro.observe(formEl);
 	}
