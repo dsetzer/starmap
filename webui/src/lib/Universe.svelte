@@ -63,11 +63,21 @@
 	let scale = initialScale;
 	let targetScale = initialScale;
 
-	// the ticker used to stop entirely after a period of inactivity to save
-	// CPU, but starting/stopping it raced with PixiJS's resize handling and
-	// caused black rendering artifacts; keeping it always running is more
-	// reliable, so this is now a no-op kept for existing call sites
-	function wake() {}
+	// fully stopping/starting the ticker on idle raced with PixiJS's resize
+	// handling and caused black rendering artifacts. Throttling the frame
+	// rate instead keeps the loop running (no race) while still cutting CPU
+	// use way down when nothing is happening on screen.
+	let isIdle = false;
+	let lastActivity = performance.now();
+	const IDLE_TIMEOUT = 1200;
+	const IDLE_FPS = 5;
+	function wake() {
+		lastActivity = performance.now();
+		if (isIdle && app) {
+			isIdle = false;
+			app.ticker.maxFPS = 0;
+		}
+	}
 
 	let velX = 0;
 	let velY = 0;
@@ -369,6 +379,7 @@
 
 		const gWarps = new PIXI.Graphics();
 		app.stage.addChild(gWarps);
+		let gWarpsHadContent = false;
 
 		// build universe hashmap for fast lookup idk
 		let universe_map: Map<string, Planet | Star> = new Map();
@@ -1058,6 +1069,8 @@
 				rebuildPlanetGrid(visMinX, visMinY, visMaxX, visMaxY);
 			}
 
+			if (warps.length > 0 || gWarpsHadContent) {
+			gWarpsHadContent = warps.length > 0;
 			gWarps.clear();
 			const screenW = app.screen.width,
 				screenH = app.screen.height;
@@ -1107,6 +1120,7 @@
 				}
 			}
 			gWarps.stroke({ width: 2, color: 0xff3333, pixelLine: true });
+			}
 
 			fpsFrames++;
 			if (now - fpsLast >= 1000) {
@@ -1116,6 +1130,18 @@
 				fpsLast = now;
 			}
 
+			const isAnimating =
+				flying ||
+				inertiaActive ||
+				Math.abs(scale - targetScale) > 1e-4 ||
+				warps.length > 0 ||
+				dragging;
+			if (isAnimating) {
+				lastActivity = now;
+			} else if (!isIdle && now - lastActivity > IDLE_TIMEOUT) {
+				isIdle = true;
+				app.ticker.maxFPS = IDLE_FPS;
+			}
 		});
 
 	});
