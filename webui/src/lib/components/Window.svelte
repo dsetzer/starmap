@@ -1,3 +1,8 @@
+<script lang="ts" context="module">
+	// shared across all windows so clicking any window raises it above the rest
+	let topZ = 1000;
+</script>
+
 <script lang="ts">
 	import { onMount } from 'svelte';
 	export let left = 200;
@@ -147,7 +152,7 @@
 		if (maxHeight === undefined && typeof window !== 'undefined')
 			maxHeight = window.innerHeight - 40;
 		if (headerEl) headerHeight = headerEl.offsetHeight;
-	
+
 		const checkHeight = () => {
 			if (!collapsed && !userResized && panelEl) {
 				const mh = effectiveMaxHeight();
@@ -155,21 +160,25 @@
 			}
 			enforceBounds();
 		};
-		
-		// this code sucks so much
+
 		requestAnimationFrame(checkHeight);
-		setTimeout(checkHeight, 0);
-		setTimeout(checkHeight, 10);
-		setTimeout(checkHeight, 100);
-		const heightCheckInterval = setInterval(checkHeight, 1000); // possibly fixes a weird bug
+
+		// react to the panel's content changing size instead of polling for it
+		const contentRo = new ResizeObserver(checkHeight);
+		contentRo.observe(panelEl);
+		if (headerEl) contentRo.observe(headerEl);
 
 		const onR = () => enforceBounds();
 		if (typeof window !== 'undefined') window.addEventListener('resize', onR);
 		return () => {
-			clearInterval(heightCheckInterval);
+			contentRo.disconnect();
 			if (typeof window !== 'undefined') window.removeEventListener('resize', onR);
 		};
 	});
+
+	function raise() {
+		if (zIndex < topZ) zIndex = ++topZ;
+	}
 
 	$: if (headerEl) headerHeight = headerEl.offsetHeight;
 
@@ -202,9 +211,12 @@
 	}
 </script>
 
+<!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div
 	bind:this={panelEl}
 	class="panel"
+	role="dialog"
+	on:mousedown={raise}
 	style:left={`${left}px`}
 	style:top={`${top}px`}
 	style:width={autoWidth ? (width ? width + 'px' : undefined) : (width ?? 620) + 'px'}
@@ -294,7 +306,7 @@
 		border-radius: calc(var(--t-radius) * var(--ui-scale)) calc(var(--t-radius) * var(--ui-scale)) 0 0;
 		user-select: none;
 		font-family: var(--t-font-mono);
-		font-size: 0.78rem;
+		font-size: 0.85rem;
 		font-weight: 500;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
@@ -320,55 +332,55 @@
 		background: transparent;
 	}
 	.edge.n {
-		top: -3px;
-		left: 6px;
-		right: 6px;
-		height: 6px;
+		top: -5px;
+		left: 10px;
+		right: 10px;
+		height: 10px;
 		cursor: ns-resize;
 	}
 	.edge.s {
-		bottom: -3px;
-		left: 6px;
-		right: 6px;
-		height: 6px;
+		bottom: -5px;
+		left: 10px;
+		right: 10px;
+		height: 10px;
 		cursor: ns-resize;
 	}
 	.edge.e {
-		top: 6px;
-		bottom: 6px;
-		right: -3px;
-		width: 6px;
+		top: 10px;
+		bottom: 10px;
+		right: -5px;
+		width: 10px;
 		cursor: ew-resize;
 	}
 	.edge.w {
-		top: 6px;
-		bottom: 6px;
-		left: -3px;
-		width: 6px;
+		top: 10px;
+		bottom: 10px;
+		left: -5px;
+		width: 10px;
 		cursor: ew-resize;
 	}
 	.corner {
-		width: 12px;
-		height: 12px;
+		width: 16px;
+		height: 16px;
 	}
 	.corner.ne {
-		top: -4px;
-		right: -4px;
+		top: -6px;
+		right: -6px;
 		cursor: nesw-resize;
 	}
 	.corner.nw {
-		top: -4px;
-		left: -4px;
+		top: -6px;
+		left: -6px;
 		cursor: nwse-resize;
 	}
 	.corner.se {
-		bottom: -4px;
-		right: -4px;
+		bottom: -6px;
+		right: -6px;
 		cursor: nwse-resize;
 	}
 	.corner.sw {
-		bottom: -4px;
-		left: -4px;
+		bottom: -6px;
+		left: -6px;
 		cursor: nesw-resize;
 	}
 	:global(body.resizing) {

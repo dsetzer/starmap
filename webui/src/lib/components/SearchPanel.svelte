@@ -74,7 +74,7 @@
 	let ro: ResizeObserver | null = null;
 	let spMaxHeight: number | undefined;
 	const spMinWidth = 360;
-	const spDefaultWidth = 780;
+	const spDefaultWidth = 860;
 	const spMaxWidth = 960;
 	function normalizeColor(v: string): string | '' {
 		if (!v) return '';
@@ -138,7 +138,7 @@
 		ro?.disconnect();
 		ro = new ResizeObserver((entries) => {
 			const w = entries[0].contentRect.width;
-			sizeClass = w < 420 ? 'xs' : w < 500 ? 'sm' : w < 710 ? 'md' : '';
+			sizeClass = w < 420 ? 'xs' : w < 500 ? 'sm' : w < 790 ? 'md' : '';
 		});
 		ro.observe(formEl);
 	}
@@ -671,6 +671,7 @@
 		gap: calc(0.6rem * var(--ui-scale));
 		align-items: start;
 	}
+	.form.md .pair,
 	.form.sm .pair,
 	.form.xs .pair {
 		grid-template-columns: 1fr;
@@ -700,7 +701,7 @@
 	}
 	.label {
 		font-family: var(--t-font-mono);
-		font-size: calc(0.68rem * var(--ui-scale));
+		font-size: calc(0.76rem * var(--ui-scale));
 		font-weight: 400;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
@@ -757,7 +758,7 @@
 		padding-bottom: calc(0.35rem * var(--ui-scale));
 		border-bottom: 1px solid var(--t-border);
 		font-family: var(--t-font-mono);
-		font-size: calc(0.72rem * var(--ui-scale));
+		font-size: calc(0.8rem * var(--ui-scale));
 		font-weight: 400;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
@@ -778,7 +779,7 @@
 	h4 {
 		margin: 0;
 		font-family: var(--t-font-mono);
-		font-size: calc(0.66rem * var(--ui-scale));
+		font-size: calc(0.74rem * var(--ui-scale));
 		font-weight: 400;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
@@ -872,7 +873,7 @@
 	}
 	.swatch-arrow {
 		color: var(--t-text-dim);
-		font-size: 0.7rem;
+		font-size: 0.76rem;
 	}
 
 	.color-row {
@@ -900,7 +901,7 @@
 		padding: 0.3rem 0.6rem;
 		border-radius: var(--t-radius-sm);
 		font-family: var(--t-font-mono);
-		font-size: 0.7rem;
+		font-size: 0.76rem;
 		text-transform: uppercase;
 		letter-spacing: 0.05em;
 		cursor: pointer;
@@ -945,7 +946,7 @@
 		color: var(--t-text-dim);
 		border-radius: var(--t-radius-sm);
 		font-family: var(--t-font-mono);
-		font-size: calc(0.72rem * var(--ui-scale));
+		font-size: calc(0.78rem * var(--ui-scale));
 		font-weight: 500;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;

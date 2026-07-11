@@ -32,7 +32,9 @@
 	--bg: var(--t-bg);
 	--surface: var(--t-surface);
 	--text: var(--t-text);
-	--ui-scale: 0.98;
+	/* kept at 1 — shrinking the UI on shorter screens made the small labels
+	   unreadable; panels scroll and resize instead */
+	--ui-scale: 1;
 
 	color-scheme: dark;
 }
@@ -47,14 +49,6 @@ body {
 	font-weight: var(--t-font-weight-thin);
 	font-size: calc(16px * var(--ui-scale));
 	line-height: 1.15;
-}
-
-@media (max-height: 1080px) {
-	:root { --ui-scale: 0.9; }
-}
-
-@media (max-height: 800px) {
-	:root { --ui-scale: 0.8; }
 }
 
 .btn {

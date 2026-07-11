@@ -37,7 +37,7 @@
 		padding: 0.32rem 0.6rem;
 		line-height: 1;
 		font-family: var(--t-font-mono);
-		font-size: 0.72rem;
+		font-size: 0.78rem;
 		font-weight: 500;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
@@ -49,7 +49,7 @@
 	}
 	.seg.xs button {
 		padding: 0.26rem 0.4rem;
-		font-size: 0.66rem;
+		font-size: 0.72rem;
 	}
 	.seg button:first-child {
 		border-radius: var(--t-radius-sm) 0 0 var(--t-radius-sm);
