@@ -63,21 +63,13 @@
 	let scale = initialScale;
 	let targetScale = initialScale;
 
-	// fully stopping/starting the ticker on idle raced with PixiJS's resize
-	// handling and caused black rendering artifacts. Throttling the frame
-	// rate instead keeps the loop running (no race) while still cutting CPU
-	// use way down when nothing is happening on screen.
-	let isIdle = false;
-	let lastActivity = performance.now();
-	const IDLE_TIMEOUT = 1200;
-	const IDLE_FPS = 5;
-	function wake() {
-		lastActivity = performance.now();
-		if (isIdle && app) {
-			isIdle = false;
-			app.ticker.maxFPS = 0;
-		}
-	}
+	// The canvas must present a frame on every vsync: whenever it doesn't
+	// (stopped or throttled ticker), Chromium's partial-redraw compositing
+	// of other layers (scrollbars, DOM updates) exposes undrawn regions of
+	// the WebGL buffer as black boxes. Presenting the retained scene every
+	// frame is cheap since geometry only rebuilds when the view changes, so
+	// there is no idle throttle. wake() is a no-op kept for call sites.
+	function wake() {}
 
 	let velX = 0;
 	let velY = 0;
@@ -1145,18 +1137,6 @@
 				fpsLast = now;
 			}
 
-			const isAnimating =
-				flying ||
-				inertiaActive ||
-				Math.abs(scale - targetScale) > 1e-4 ||
-				warps.length > 0 ||
-				dragging;
-			if (isAnimating) {
-				lastActivity = now;
-			} else if (!isIdle && now - lastActivity > IDLE_TIMEOUT) {
-				isIdle = true;
-				app.ticker.maxFPS = IDLE_FPS;
-			}
 		});
 
 	});

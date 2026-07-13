@@ -15,7 +15,7 @@
 	} from '$lib/util/types';
 	import { onMount, onDestroy } from 'svelte';
 
-	export let left = 200;
+	export let left = 16;
 	export let top = 56;
 	export let search_results: SearchResult | null = null;
 	export let universe_data: UniverseData;
@@ -299,8 +299,14 @@
 	maxWidth={spMaxWidth}
 	width={spDefaultWidth}
 	maxHeight={spMaxHeight}
+	winClass="search-window"
+	closable
+	onClose={() => (hidden = true)}
 >
 	<span slot="title">Search</span>
+	<button slot="actions" type="button" class="hdr-btn" on:click={resetAllFilters}>
+		Reset All
+	</button>
 
 	<div class="form {sizeClass}" bind:this={formEl}>
 		<div class="pair">
@@ -606,16 +612,6 @@
 			</div>
 		</section>
 
-		<div class="footer">
-			<button type="button" class="footer-btn" on:click={() => (hidden = true)}>
-				Close
-			</button>
-			<div class="footer-right">
-				<button type="button" class="footer-btn" on:click={resetAllFilters}>
-					Reset All
-				</button>
-			</div>
-		</div>
 	</div>
 </Window>
 {/if}
@@ -911,57 +907,22 @@
 		color: var(--t-text);
 	}
 
-	.footer {
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-		position: sticky;
-		bottom: 0;
-		margin-left: calc(-1.8rem * var(--ui-scale));
-		margin-right: calc(-1rem * var(--ui-scale));
-		padding: calc(0.6rem * var(--ui-scale)) calc(1rem * var(--ui-scale)) calc(0.8rem * var(--ui-scale))
-			calc(1.8rem * var(--ui-scale));
-		background: color-mix(in oklab, var(--t-surface) 92%, var(--t-surface-high));
-	}
-	.footer-right {
-		display: flex;
-		gap: calc(0.5rem * var(--ui-scale));
-	}
-	.form.xs .footer {
-		flex-direction: column-reverse;
-		align-items: stretch;
-		gap: calc(0.5rem * var(--ui-scale));
-	}
-	.form.xs .footer-right {
-		flex-direction: column;
-	}
-	.footer-btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		gap: 0.5rem;
-		padding: calc(0.5rem * var(--ui-scale)) calc(0.9rem * var(--ui-scale));
+	.hdr-btn {
+		padding: 0.15rem 0.5rem;
 		border: 1px solid var(--t-border);
 		background: transparent;
 		color: var(--t-text-dim);
 		border-radius: var(--t-radius-sm);
 		font-family: var(--t-font-mono);
-		font-size: calc(0.78rem * var(--ui-scale));
+		font-size: 0.7rem;
 		font-weight: 500;
 		letter-spacing: 0.05em;
 		text-transform: uppercase;
 		cursor: pointer;
-		transition: all 0.15s ease;
+		transition: border-color 0.15s ease, color 0.15s ease;
 	}
-	.footer-btn svg {
-		width: 1rem;
-		height: 1rem;
-	}
-	.footer-btn:hover {
+	.hdr-btn:hover {
 		border-color: var(--t-primary);
 		color: var(--t-text);
-	}
-	.footer-btn:active {
-		transform: scale(0.98);
 	}
 </style>

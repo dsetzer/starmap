@@ -15,6 +15,10 @@
 	let searchHidden = false;
 	let resultsHidden = true;
 
+	// pop the results window open whenever a search runs (typing a filter,
+	// picking a type, resetting, etc.)
+	$: if (search_results !== null) resultsHidden = false;
+
 	function parseCoordString(str: string | null): Coordinate | null {
 		if (!str) return null;
 		const parts = str.split(',').map(s => parseInt(s.trim()));
@@ -153,22 +157,66 @@
 		if (placed) return;
 		const p = toScreen(selected, v);
 
-		// conservative estimate of the info panel's footprint, used to keep it
-		// fully on screen — flip to the other side of the point if it would
-		// otherwise run past the right or bottom edge of the viewport
+		// estimate of the info panel's footprint; try spots around the planet
+		// and pick the one that stays on screen and overlaps the search and
+		// results windows the least
 		const estW = 380;
 		const estH = 480;
-		const vw = typeof window !== 'undefined' ? window.innerWidth : Infinity;
-		const vh = typeof window !== 'undefined' ? window.innerHeight : Infinity;
+		const margin = 12;
+		const navH = 44;
+		const offset = 28;
+		const vw = typeof window !== 'undefined' ? window.innerWidth : 1920;
+		const vh = typeof window !== 'undefined' ? window.innerHeight : 1080;
 
-		let x = p.x + 24;
-		let y = p.y;
+		const others =
+			typeof document !== 'undefined'
+				? Array.from(
+						document.querySelectorAll('.panel.search-window, .panel.results-window')
+					).map((el) => el.getBoundingClientRect())
+				: [];
 
-		if (x + estW > vw) x = p.x - estW - 24;
-		if (y + estH > vh) y = vh - estH - 16;
+		const clampPos = (c: { x: number; y: number }) => ({
+			x: Math.min(Math.max(c.x, margin), vw - estW - margin),
+			y: Math.min(Math.max(c.y, navH + margin), vh - estH - margin)
+		});
+		const overlapArea = (x: number, y: number) => {
+			let a = 0;
+			for (const r of others) {
+				const w = Math.min(x + estW, r.right) - Math.max(x, r.left);
+				const h = Math.min(y + estH, r.bottom) - Math.max(y, r.top);
+				if (w > 0 && h > 0) a += w * h;
+			}
+			return a;
+		};
 
-		panelX = Math.max(0, x);
-		panelY = Math.max(0, y);
+		const candidates = [
+			{ x: p.x + offset, y: p.y - estH / 2 },
+			{ x: p.x - estW - offset, y: p.y - estH / 2 },
+			{ x: p.x - estW / 2, y: p.y + offset },
+			{ x: p.x - estW / 2, y: p.y - estH - offset },
+			{ x: vw / 2 - estW / 2, y: vh / 2 - estH / 2 },
+			// spots hugging the edges of the open windows, for when the
+			// planet sits close to (or under) one of them
+			...others.flatMap((r) => [
+				{ x: r.right + margin, y: p.y - estH / 2 },
+				{ x: r.left - estW - margin, y: p.y - estH / 2 }
+			])
+		].map(clampPos);
+
+		let best = candidates[0];
+		let bestScore = Infinity;
+		for (const c of candidates) {
+			const dist =
+				Math.abs(c.x + estW / 2 - p.x) + Math.abs(c.y + estH / 2 - p.y);
+			const score = overlapArea(c.x, c.y) + dist * 0.5;
+			if (score < bestScore) {
+				bestScore = score;
+				best = c;
+			}
+		}
+
+		panelX = best.x;
+		panelY = best.y;
 		placed = true;
 	}
 
@@ -177,12 +225,21 @@
 		return `${a(px)},${a(py)} ${a(px)},${a(ly)} ${a(lx)},${a(ly)}`;
 	}
 
+	let prevView = { x: NaN, y: NaN, scale: NaN };
 	const unsub = viewMatrix.subscribe((v) => {
 		const p = toScreen(selected, v);
 		screenX = p.x;
 		screenY = p.y;
 		scale = v.scale;
-		place(v);
+		// wait until the camera has stopped moving (fly-to finished) before
+		// placing the info popup, so it's positioned relative to where the
+		// planet ends up, not where it was when clicked
+		const settled =
+			Math.abs(v.x - prevView.x) < 0.5 &&
+			Math.abs(v.y - prevView.y) < 0.5 &&
+			Math.abs(v.scale - prevView.scale) < 0.01;
+		prevView = v;
+		if (settled) place(v);
 	});
 	onDestroy(unsub);
 	$: if (typeof window !== 'undefined') {

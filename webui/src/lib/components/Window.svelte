@@ -17,6 +17,9 @@
 	export let maxHeight: number | undefined = undefined;
 	export let autoWidth = false;
 	export let zIndex = 900;
+	export let winClass = '';
+	export let closable = false;
+	export let onClose: () => void = () => {};
 
 	let startX = 0;
 	let startY = 0;
@@ -214,7 +217,7 @@
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <div
 	bind:this={panelEl}
-	class="panel"
+	class="panel {winClass}"
 	role="dialog"
 	on:mousedown={raise}
 	style:left={`${left}px`}
@@ -228,10 +231,16 @@
 	style:z-index={zIndex}
 >
 	<div bind:this={headerEl} class="header" role="toolbar" tabindex="0" on:mousedown={dragStart}>
-		<slot name="title"></slot>
-		{#if collapsible}
-			<button class="arrow" on:click|stopPropagation={toggle}>{collapsed ? '▸' : '▾'}</button>
-		{/if}
+		<span class="header-title"><slot name="title"></slot></span>
+		<span class="header-actions" role="presentation" on:mousedown|stopPropagation>
+			<slot name="actions"></slot>
+			{#if collapsible}
+				<button class="arrow" on:click={toggle}>{collapsed ? '▸' : '▾'}</button>
+			{/if}
+			{#if closable}
+				<button class="close" aria-label="Close" on:click={() => onClose()}>✕</button>
+			{/if}
+		</span>
 	</div>
 	{#if !collapsed}
 		<div class="body"><slot /></div>
@@ -312,17 +321,38 @@
 		text-transform: uppercase;
 		color: var(--t-primary-text);
 	}
-	.arrow {
+	.header-title {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		min-width: 0;
+	}
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		cursor: default;
+	}
+	.arrow,
+	.close {
 		background: transparent;
 		border: none;
 		color: var(--t-text-dim);
 		font-size: 1rem;
+		line-height: 1;
 		cursor: pointer;
-		padding: 0;
+		padding: 0.1rem 0.2rem;
+	}
+	.close {
+		font-size: 0.85rem;
+	}
+	.arrow:hover,
+	.close:hover {
+		color: var(--t-text);
 	}
 	.body {
-		padding: calc(0.5rem * var(--ui-scale)) calc(1rem * var(--ui-scale))
-			calc(0.8rem * var(--ui-scale)) calc(1.8rem * var(--ui-scale));
+		padding: calc(0.6rem * var(--ui-scale)) calc(1rem * var(--ui-scale))
+			calc(0.8rem * var(--ui-scale));
 	}
 	.resizer {
 		position: absolute;
