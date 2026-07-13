@@ -96,6 +96,9 @@
 	onMount(() => {
 		if (!browser) return;
 		updateContainerHeight();
+		// spawn against the right edge of the viewport, leaving the center
+		// open for the planet info popup
+		left = Math.max(16, window.innerWidth - width - 24);
 	});
 
 	const planetInfoCache = new WeakMap<Planet, any>();
@@ -233,14 +236,24 @@
 </script>
 
 {#if !hidden}
-<Window bind:left bind:top bind:width bind:height collapsible={false} minWidth={480} maxWidth={900}>
+<Window
+	bind:left
+	bind:top
+	bind:width
+	bind:height
+	collapsible={false}
+	minWidth={480}
+	maxWidth={900}
+	winClass="results-window"
+	closable
+	onClose={() => (hidden = true)}
+>
 	<span slot="title">Results</span>
 
 	<div class="toolbar">
 		<button class:selected={!showStars} on:click={() => (showStars = false)}>Planets</button>
 		<button class:selected={showStars} on:click={() => (showStars = true)}>Stars</button>
         <button on:click={() => downloadData()}>Export Data</button>
-		<button class="close-btn" on:click={() => (hidden = true)} aria-label="Close">✕</button>
 	</div>
 
 	<div class="counts">
@@ -405,9 +418,6 @@
 	.toolbar button.selected {
 		background: var(--green-2);
 		border-color: var(--green-4);
-	}
-	.close-btn {
-		margin-left: auto;
 	}
 	.counts {
 		display: flex;
