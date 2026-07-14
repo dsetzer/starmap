@@ -6,6 +6,7 @@
 	import SearchResults from '$lib/components/SearchResults.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
 	import { onDestroy, onMount, tick } from 'svelte';
+	import { replaceState } from '$app/navigation';
 	import { parseUniverse } from '$lib/util/universe';
 	import type { Coordinate, SearchResult, SolarSystem } from '$lib/util/types';
 	import { loadUniverse } from '$lib/util/assets';
@@ -254,7 +255,7 @@
 				const base = current.origin + current.pathname;
 				const newUrl = base + '?' + (other ? other + '&' : '') + 'c=' + coordStr + (current.hash || '');
 				internalUpdate = true;
-				history.replaceState(history.state, '', newUrl);
+				syncUrl(newUrl);
 			}
 		} else {
 			const current = new URL(window.location.href);
@@ -265,8 +266,17 @@
 				const base = current.origin + current.pathname;
 				const newUrl = other ? base + '?' + other + (current.hash || '') : base + (current.hash || '');
 				internalUpdate = true;
-				history.replaceState(history.state, '', newUrl);
+				syncUrl(newUrl);
 			}
+		}
+	}
+
+	function syncUrl(newUrl: string) {
+		try {
+			replaceState(newUrl, history.state ?? {});
+		} catch {
+			// router not initialized yet (first hydration tick)
+			history.replaceState(history.state, '', newUrl);
 		}
 	}
 
