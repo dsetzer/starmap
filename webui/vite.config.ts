@@ -1,16 +1,19 @@
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
-import { VitePWA } from 'vite-plugin-pwa';
+import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 
 export default defineConfig({
 	plugins: [
 		sveltekit(),
 		devtoolsJson(),
-		VitePWA({
+		SvelteKitPWA({
 			registerType: 'autoUpdate',
-			includeAssets: ['favicon.svg', 'robots.txt'],
+			includeAssets: ['favicon.svg'],
 			base: process.env.NODE_ENV === 'production' ? '/starmap/' : '/',
+			kit: {
+				base: process.env.NODE_ENV === 'production' ? '/starmap' : undefined
+			},
 			manifest: {
 				name: 'Starmap',
 				short_name: 'Starmap',
