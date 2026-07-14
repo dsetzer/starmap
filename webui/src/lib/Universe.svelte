@@ -308,20 +308,22 @@
 
 		const atlasPromise = loadTextureAtlas()
 			.then(({ atlasData, image }) => {
-				const atlasTexture = PIXI.Texture.from(image);
-				atlasTexture.baseTexture.scaleMode = 'nearest';
-				atlasTexture.baseTexture.autoGenerateMipmaps = true;
-				atlasTexture.baseTexture.update();
-				atlasTexture.baseTexture.updateMipmaps();
+				// draw onto a canvas so Pixi gets a CanvasSource directly instead
+				// of converting the image element itself
+				const atlasCanvas = document.createElement('canvas');
+				atlasCanvas.width = image.width;
+				atlasCanvas.height = image.height;
+				atlasCanvas.getContext('2d')!.drawImage(image, 0, 0);
+				const atlasTexture = PIXI.Texture.from(atlasCanvas);
+				atlasTexture.source.scaleMode = 'nearest';
+				atlasTexture.source.autoGenerateMipmaps = true;
+				atlasTexture.source.update();
+				atlasTexture.source.updateMipmaps();
 				for (const textureName of [...allPlanetTextureNames, ...allStarTextureNames]) {
 					const frameKey = textureName.toLowerCase();
 					if (atlasData.frames[frameKey]) {
 						const frame = atlasData.frames[frameKey].frame;
 						const texture = new PIXI.Texture({ source: atlasTexture.source, frame: new PIXI.Rectangle(frame.x, frame.y, frame.w, frame.h) });
-						texture.baseTexture.scaleMode = 'nearest';
-						texture.baseTexture.autoGenerateMipmaps = true;
-						texture.baseTexture.update();
-						texture.baseTexture.updateMipmaps();
 						if (allPlanetTextureNames.includes(textureName)) {
 							planetTextures[textureName] = texture;
 							if (textureName === 'Icering') ringTextures['Ice'] = texture;
@@ -365,7 +367,7 @@
 		const bodies = new PIXI.Container();
 		universe.addChild(bodies);
 
-		const gStars = new PIXI.Graphics();
+		const gStars = new PIXI.Container();
 		gStars.scale.set(1 / DETAIL);
 		bodies.addChild(gStars);
 

@@ -32,9 +32,9 @@
 	--bg: var(--t-bg);
 	--surface: var(--t-surface);
 	--text: var(--t-text);
-	/* kept at 1 — shrinking the UI on shorter screens made the small labels
-	   unreadable; panels scroll and resize instead */
-	--ui-scale: 1;
+	/* fixed scale — media-query shrinking on shorter screens made the small
+	   labels unreadable; panels scroll and resize instead */
+	--ui-scale: 0.95;
 
 	color-scheme: dark;
 }
