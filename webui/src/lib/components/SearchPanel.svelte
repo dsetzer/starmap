@@ -665,7 +665,7 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: calc(0.6rem * var(--ui-scale));
-		align-items: start;
+		align-items: stretch;
 	}
 	.form.md .pair,
 	.form.sm .pair,
@@ -675,6 +675,8 @@
 
 	/* card */
 	.card {
+		display: flex;
+		flex-direction: column;
 		background: linear-gradient(
 			160deg,
 			color-mix(in oklab, var(--t-primary) 8%, var(--t-surface-high) 55%),
