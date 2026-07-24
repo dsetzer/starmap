@@ -28,7 +28,6 @@
 	let startW = 0;
 	let startH = 0;
 	let dir = '';
-	let userResized = false;
 	let panelEl: HTMLDivElement;
 	let headerEl: HTMLDivElement;
 	let effMinW = 0,
@@ -71,7 +70,6 @@
 	function resizeStart(e: MouseEvent, d: string) {
 		if (collapsed && (d.includes('n') || d.includes('s'))) return;
 		e.stopPropagation();
-		if (d.includes('n') || d.includes('s')) userResized = true;
 		dir = d;
 		startX = e.clientX;
 		startY = e.clientY;
@@ -149,35 +147,36 @@
 		else document.body.classList.remove('resizing');
 	}
 
+	let viewportH = typeof window !== 'undefined' ? window.innerHeight : 0;
+
 	onMount(() => {
 		if (minWidth === undefined) minWidth = 180;
 		if (minHeight === undefined) minHeight = 120;
 		if (maxHeight === undefined && typeof window !== 'undefined')
 			maxHeight = window.innerHeight - 40;
 		if (headerEl) headerHeight = headerEl.offsetHeight;
+		enforceBounds();
 
-		const checkHeight = () => {
-			if (!collapsed && !userResized && panelEl) {
-				const mh = effectiveMaxHeight();
-				height = panelEl.scrollHeight > mh ? mh : undefined;
-			}
+		const onR = () => {
+			viewportH = window.innerHeight;
 			enforceBounds();
 		};
-
-		requestAnimationFrame(checkHeight);
-
-		// react to the panel's content changing size instead of polling for it
-		const contentRo = new ResizeObserver(checkHeight);
-		contentRo.observe(panelEl);
-		if (headerEl) contentRo.observe(headerEl);
-
-		const onR = () => enforceBounds();
 		if (typeof window !== 'undefined') window.addEventListener('resize', onR);
 		return () => {
-			contentRo.disconnect();
 			if (typeof window !== 'undefined') window.removeEventListener('resize', onR);
 		};
 	});
+
+	// the panel never gets an explicit height unless the user resizes it;
+	// this CSS max-height keeps it on screen from wherever it sits, and the
+	// scrollable body absorbs any overflow
+	$: cssMaxHeight = collapsed
+		? headerHeight + 'px'
+		: viewportH > 0
+			? Math.max(minHeight ?? 120, Math.min(maxHeight ?? Infinity, viewportH - top - 8)) + 'px'
+			: maxHeight
+				? maxHeight + 'px'
+				: undefined;
 
 	function raise() {
 		if (zIndex < topZ) zIndex = ++topZ;
@@ -227,7 +226,7 @@
 	style:max-width={maxWidth ? maxWidth + 'px' : undefined}
 	style:height={collapsed ? headerHeight + 'px' : height ? height + 'px' : undefined}
 	style:min-height={collapsed ? headerHeight + 'px' : minHeight ? minHeight + 'px' : undefined}
-	style:max-height={collapsed ? headerHeight + 'px' : maxHeight ? maxHeight + 'px' : undefined}
+	style:max-height={cssMaxHeight}
 	style:z-index={zIndex}
 >
 	<div bind:this={headerEl} class="header" role="toolbar" tabindex="0" on:mousedown={dragStart}>

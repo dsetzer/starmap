@@ -309,7 +309,7 @@
 	</button>
 
 	<div class="form {sizeClass}" bind:this={formEl}>
-		<div class="pair">
+		<div class="col-flow">
 		<section class="section card">
 			<h3>Object Info</h3>
 			<div class="row">
@@ -468,28 +468,6 @@
 				</div>
 			{/if}
 		</section>
-		</div>
-
-		<div class="pair">
-		<section class="section card">
-			<h3>Planet Type</h3>
-			<div class="pill-wrap">
-				{#each Object.keys(PlanetType).filter((k) => !isNaN(Number(k))) as key (key)}
-					{#if !isNaN(Number(key))}
-						<TriPill
-							className="sm"
-							label={PlanetType[Number(key)]}
-							value={planet_type_filters[Number(key)]}
-							onChange={(v) => {
-								planet_type_filters[Number(key)] = v;
-								run();
-							}}
-						/>
-					{/if}
-				{/each}
-			</div>
-		</section>
-
 		<section class="section card">
 			<h3>Star Type</h3>
 			<div class="star-grid">
@@ -508,9 +486,25 @@
 				{/each}
 			</div>
 		</section>
-		</div>
 
-		<div class="pair">
+		<section class="section card">
+			<h3>Planet Type</h3>
+			<div class="pill-wrap">
+				{#each Object.keys(PlanetType).filter((k) => !isNaN(Number(k))) as key (key)}
+					{#if !isNaN(Number(key))}
+						<TriPill
+							className="sm"
+							label={PlanetType[Number(key)]}
+							value={planet_type_filters[Number(key)]}
+							onChange={(v) => {
+								planet_type_filters[Number(key)] = v;
+								run();
+							}}
+						/>
+					{/if}
+				{/each}
+			</div>
+		</section>
 		<section class="section card">
 			<h3>Range Filters</h3>
 			<div class="sub">
@@ -661,20 +655,28 @@
 		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 	}
 
-	.pair {
-		display: grid;
-		grid-template-columns: 1fr 1fr;
-		gap: calc(0.6rem * var(--ui-scale));
-		align-items: start;
+	/* cards flow into two balanced columns instead of being locked into
+	   fixed-height rows, so a shorter card never leaves a gap under it —
+	   the next card in DOM order just continues below it in the same
+	   column */
+	.col-flow {
+		column-count: 2;
+		column-gap: calc(0.6rem * var(--ui-scale));
 	}
-	.form.md .pair,
-	.form.sm .pair,
-	.form.xs .pair {
-		grid-template-columns: 1fr;
+	.col-flow .card {
+		break-inside: avoid;
+		margin-bottom: calc(0.6rem * var(--ui-scale));
+	}
+	.form.md .col-flow,
+	.form.sm .col-flow,
+	.form.xs .col-flow {
+		column-count: 1;
 	}
 
 	/* card */
 	.card {
+		display: flex;
+		flex-direction: column;
 		background: linear-gradient(
 			160deg,
 			color-mix(in oklab, var(--t-primary) 8%, var(--t-surface-high) 55%),
