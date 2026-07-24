@@ -472,25 +472,6 @@
 
 		<div class="pair">
 		<section class="section card">
-			<h3>Planet Type</h3>
-			<div class="pill-wrap">
-				{#each Object.keys(PlanetType).filter((k) => !isNaN(Number(k))) as key (key)}
-					{#if !isNaN(Number(key))}
-						<TriPill
-							className="sm"
-							label={PlanetType[Number(key)]}
-							value={planet_type_filters[Number(key)]}
-							onChange={(v) => {
-								planet_type_filters[Number(key)] = v;
-								run();
-							}}
-						/>
-					{/if}
-				{/each}
-			</div>
-		</section>
-
-		<section class="section card">
 			<h3>Star Type</h3>
 			<div class="star-grid">
 				{#each Object.keys(StarType).filter((k) => !isNaN(Number(k))) as key (key)}
@@ -501,6 +482,25 @@
 							value={star_type_filters[Number(key)]}
 							onChange={(v) => {
 								star_type_filters[Number(key)] = v;
+								run();
+							}}
+						/>
+					{/if}
+				{/each}
+			</div>
+		</section>
+
+		<section class="section card">
+			<h3>Planet Type</h3>
+			<div class="pill-wrap">
+				{#each Object.keys(PlanetType).filter((k) => !isNaN(Number(k))) as key (key)}
+					{#if !isNaN(Number(key))}
+						<TriPill
+							className="sm"
+							label={PlanetType[Number(key)]}
+							value={planet_type_filters[Number(key)]}
+							onChange={(v) => {
+								planet_type_filters[Number(key)] = v;
 								run();
 							}}
 						/>
