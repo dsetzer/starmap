@@ -1201,6 +1201,12 @@
 		border-radius: 0.65rem;
 		transition: background 0.2s ease, border-color 0.2s ease;
 	}
+	@media (pointer: coarse) {
+		.resbtn {
+			min-height: 40px;
+			padding: 0.5rem 0.85rem;
+		}
+	}
 	.resbtn:hover {
 		background: rgba(15, 23, 42, 1);
 	}

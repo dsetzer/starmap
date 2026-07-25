@@ -375,6 +375,16 @@
 	.close:hover {
 		color: var(--t-text);
 	}
+	@media (pointer: coarse) {
+		.arrow,
+		.close {
+			min-width: 40px;
+			min-height: 40px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
 	.body {
 		padding: calc(0.6rem * var(--ui-scale)) calc(1rem * var(--ui-scale))
 			calc(0.8rem * var(--ui-scale));

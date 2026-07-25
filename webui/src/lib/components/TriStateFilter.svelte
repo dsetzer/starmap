@@ -51,6 +51,12 @@
 		padding: 0.26rem 0.4rem;
 		font-size: 0.72rem;
 	}
+	@media (pointer: coarse) {
+		.seg button {
+			min-height: 40px;
+			padding: 0.5rem 0.6rem;
+		}
+	}
 	.seg button:first-child {
 		border-radius: var(--t-radius-sm) 0 0 var(--t-radius-sm);
 	}
