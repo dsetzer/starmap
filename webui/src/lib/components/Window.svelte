@@ -88,6 +88,15 @@
 			}
 		}
 		effMaxH = maxHeight ?? (typeof window !== 'undefined' ? window.innerHeight - 40 : undefined);
+		// don't let 's'/'n' resize stretch the window past what its content
+		// actually needs — that just creates empty space at the bottom
+		if (d.includes('n') || d.includes('s')) {
+			const bodyEl = panelEl?.querySelector<HTMLElement>('.body');
+			if (bodyEl) {
+				const naturalH = headerHeight + bodyEl.scrollHeight + 2;
+				effMaxH = effMaxH !== undefined ? Math.min(effMaxH, naturalH) : naturalH;
+			}
+		}
 		window.addEventListener('mousemove', resizeMove);
 		window.addEventListener('mouseup', resizeEnd);
 		bypassSelection(true);
