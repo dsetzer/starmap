@@ -47,6 +47,14 @@
 		min-width: 0;
 		transition: border-color 0.15s ease, background 0.15s ease;
 	}
+	/* touch devices have no hover to fall back on, so tap targets need to
+	   actually be big enough to hit with a finger */
+	@media (pointer: coarse) {
+		.tri-pill {
+			min-height: 40px;
+			padding: 0.5rem 0.6rem;
+		}
+	}
 	.tri-pill-label {
 		overflow: hidden;
 		text-overflow: ellipsis;

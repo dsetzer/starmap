@@ -616,6 +616,7 @@
 				velY = 0;
 				lastMoveTs = performance.now();
 				last = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+				select = true;
 				select_last = { ...last };
 			} else if (e.touches.length === 2) {
 				dragging = false;
@@ -648,6 +649,9 @@
 				velX = velX * 0.7 + (dx / dt) * 0.3;
 				velY = velY * 0.7 + (dy / dt) * 0.3;
 				lastMoveTs = now;
+
+				const diff = Math.abs(select_last.x - t.clientX) + Math.abs(select_last.y - t.clientY);
+				if (diff >= select_distance_threshold) select = false;
 			} else if (e.touches.length === 2) {
 				const [a, b] = touchInfo(e);
 				const d = Math.hypot(a.x - b.x, a.y - b.y);
@@ -664,10 +668,17 @@
 				};
 			}
 		};
-		const onTouchEnd = () => {
+		const onTouchEnd = (e: TouchEvent) => {
 			if (pinchDist && scale !== pinchStartScale) select = false;
 			pinchDist = 0;
 			releaseDrag();
+
+			if (select && e.changedTouches.length) {
+				const t = e.changedTouches[0];
+				const c = toUniverseCoords(t.clientX, t.clientY);
+				if (c) dispatch('worldclick', c);
+			}
+			select = true;
 		};
 		app.canvas.addEventListener('touchstart', onTouchStart, { passive: false });
 		app.canvas.addEventListener('touchmove', onTouchMove, { passive: false });
@@ -1190,11 +1201,28 @@
 		border-radius: 0.65rem;
 		transition: background 0.2s ease, border-color 0.2s ease;
 	}
+	@media (pointer: coarse) {
+		.resbtn {
+			min-height: 40px;
+			padding: 0.5rem 0.85rem;
+		}
+	}
 	.resbtn:hover {
 		background: rgba(15, 23, 42, 1);
 	}
 	.coord {
 		top: 12px;
 		right: 10px;
+	}
+
+	/* on narrow screens the navbar's Search/Results buttons are centered
+	   and would otherwise sit under these badges; push the badges below
+	   the navbar instead of trying to squeeze past it */
+	@media (max-width: 560px) {
+		.fps,
+		.resbtn,
+		.coord {
+			top: 52px;
+		}
 	}
 </style>

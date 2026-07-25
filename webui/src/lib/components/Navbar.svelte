@@ -48,6 +48,12 @@
 		cursor: pointer;
 		transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
 	}
+	@media (pointer: coarse) {
+		.nav-btn {
+			min-height: 40px;
+			padding: 0.5rem 1.1rem;
+		}
+	}
 	.nav-btn:hover {
 		border-color: var(--t-primary, var(--green-4));
 		color: var(--t-text, var(--text));

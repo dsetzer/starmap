@@ -88,6 +88,15 @@
 			}
 		}
 		effMaxH = maxHeight ?? (typeof window !== 'undefined' ? window.innerHeight - 40 : undefined);
+		// don't let 's'/'n' resize stretch the window past what its content
+		// actually needs — that just creates empty space at the bottom
+		if (d.includes('n') || d.includes('s')) {
+			const bodyEl = panelEl?.querySelector<HTMLElement>('.body');
+			if (bodyEl) {
+				const naturalH = headerHeight + bodyEl.scrollHeight + 2;
+				effMaxH = effMaxH !== undefined ? Math.min(effMaxH, naturalH) : naturalH;
+			}
+		}
 		window.addEventListener('mousemove', resizeMove);
 		window.addEventListener('mouseup', resizeEnd);
 		bypassSelection(true);
@@ -188,12 +197,29 @@
 		if (typeof window === 'undefined') return;
 		const vw = window.innerWidth;
 		const vh = window.innerHeight;
+
+		// a window must never be wider than the viewport itself — on a
+		// narrow/mobile screen this shrinks it to fit instead of letting it
+		// run off the side with no way to reach its edge or close button
+		const margin = 16;
+		if (vw - margin * 2 < (minWidth ?? 180)) {
+			width = vw - margin * 2;
+		} else if (width !== undefined && width > vw - margin * 2) {
+			width = vw - margin * 2;
+		}
+
 		const panelW = (width ?? panelEl?.offsetWidth) || 0;
-		const minVisibleX = 80;
+		const minVisibleX = Math.min(80, panelW);
 		const minLeft = -(panelW - minVisibleX);
-		const maxLeft = vw - minVisibleX;
+		const maxLeft = Math.max(minLeft, vw - minVisibleX);
 		if (left < minLeft) left = minLeft;
 		if (left > maxLeft) left = maxLeft;
+		// fully on-screen horizontally whenever it fits, rather than only
+		// requiring a sliver to be visible
+		if (panelW <= vw) {
+			if (left < 0) left = 0;
+			if (left + panelW > vw) left = vw - panelW;
+		}
 		if (top < 0) top = 0;
 		const maxTop = vh - 40;
 		if (top > maxTop) top = maxTop;
@@ -277,11 +303,8 @@
 		flex-direction: column;
 		min-width: calc(180px * var(--ui-scale));
 		max-width: calc(640px * var(--ui-scale));
-		background: linear-gradient(
-			165deg,
-			color-mix(in oklab, var(--t-surface-high) 55%, var(--t-surface)),
-			var(--t-surface) 60%
-		);
+		/* flat body — the gradient belongs to the title bar only */
+		background: var(--t-surface);
 		color: var(--t-text);
 		border: 1px solid var(--t-border);
 		border-radius: calc(var(--t-radius) * var(--ui-scale));
@@ -348,6 +371,16 @@
 	.arrow:hover,
 	.close:hover {
 		color: var(--t-text);
+	}
+	@media (pointer: coarse) {
+		.arrow,
+		.close {
+			min-width: 40px;
+			min-height: 40px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
 	}
 	.body {
 		padding: calc(0.6rem * var(--ui-scale)) calc(1rem * var(--ui-scale))
