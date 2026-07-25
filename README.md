@@ -6,7 +6,7 @@ Browser-based star map for the Roblox game Waste of Space. Search for planets an
 
 ## Live Site
 
-https://dsetzer.github.io/starmap/
+You can use the live version at https://dsetzer.github.io/starmap/ right away.
 
 ## Works Offline (PWA)
 
@@ -29,6 +29,8 @@ npm run dist
 ```
 
 ## Running Locally
+
+The live site is already available at https://dsetzer.github.io/starmap/, so you do not need to run anything locally just to use it. Local setup is only needed if you want to develop or run the project yourself.
 
 Install [Bun](https://bun.com/docs/installation), then:
 
