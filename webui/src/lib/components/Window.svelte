@@ -303,11 +303,8 @@
 		flex-direction: column;
 		min-width: calc(180px * var(--ui-scale));
 		max-width: calc(640px * var(--ui-scale));
-		background: linear-gradient(
-			165deg,
-			color-mix(in oklab, var(--t-surface-high) 55%, var(--t-surface)),
-			var(--t-surface) 60%
-		);
+		/* flat body — the gradient belongs to the title bar only */
+		background: var(--t-surface);
 		color: var(--t-text);
 		border: 1px solid var(--t-border);
 		border-radius: calc(var(--t-radius) * var(--ui-scale));

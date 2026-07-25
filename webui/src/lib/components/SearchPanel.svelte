@@ -348,7 +348,7 @@
 			</label>
 		</section>
 
-		<section class="section card">
+		<section class="section card spread">
 			<h3>Primary Color</h3>
 			<button
 				type="button"
@@ -490,6 +490,27 @@
 			</div>
 		</section>
 
+		<section class="section card grow">
+			<h3>Star Type</h3>
+			<div class="star-grid">
+				{#each Object.keys(StarType).filter((k) => !isNaN(Number(k))) as key (key)}
+					{#if !isNaN(Number(key))}
+						<TriPill
+							className="sm"
+							label={StarType[Number(key)]}
+							value={star_type_filters[Number(key)]}
+							onChange={(v) => {
+								star_type_filters[Number(key)] = v;
+								run();
+							}}
+						/>
+					{/if}
+				{/each}
+			</div>
+		</section>
+		</div>
+
+		<div class="pair">
 		<section class="section card">
 			<h3>Range Filters</h3>
 			<div class="sub">
@@ -523,27 +544,6 @@
 						class="rs"
 					/>
 				</div>
-			</div>
-		</section>
-		</div>
-
-		<div class="pair">
-		<section class="section card">
-			<h3>Star Type</h3>
-			<div class="star-grid">
-				{#each Object.keys(StarType).filter((k) => !isNaN(Number(k))) as key (key)}
-					{#if !isNaN(Number(key))}
-						<TriPill
-							className="sm"
-							label={StarType[Number(key)]}
-							value={star_type_filters[Number(key)]}
-							onChange={(v) => {
-								star_type_filters[Number(key)] = v;
-								run();
-							}}
-						/>
-					{/if}
-				{/each}
 			</div>
 		</section>
 
@@ -665,7 +665,9 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		gap: calc(0.6rem * var(--ui-scale));
-		align-items: start;
+		/* paired cards share the row's full height so their borders always
+		   line up with no gap below the shorter one */
+		align-items: stretch;
 	}
 	.form.md .pair,
 	.form.sm .pair,
@@ -673,21 +675,31 @@
 		grid-template-columns: 1fr;
 	}
 
-	/* card */
+	/* card — flat surface; the gradient lives on the window title bar only */
 	.card {
-		display: flex;
-		flex-direction: column;
-		background: linear-gradient(
-			160deg,
-			color-mix(in oklab, var(--t-primary) 8%, var(--t-surface-high) 55%),
-			color-mix(in oklab, var(--t-surface) 55%, transparent) 65%
-		);
+		background: color-mix(in oklab, var(--t-surface-high) 40%, var(--t-surface));
 		border: 1px solid var(--t-border);
 		border-radius: var(--t-radius);
 		padding: calc(0.75rem * var(--ui-scale));
 	}
 	.card.compact4 {
 		grid-template-columns: repeat(2, 1fr);
+		grid-template-rows: auto 1fr 1fr;
+	}
+	.card.compact4 .sub {
+		align-content: center;
+	}
+	/* the type grid stretches through its card's height, spacing its rows
+	   evenly instead of clumping at the top */
+	.card.grow {
+		grid-template-rows: auto 1fr;
+	}
+	.card.grow .star-grid {
+		align-content: space-evenly;
+	}
+	/* distributes leftover height between the color sections */
+	.card.spread {
+		align-content: space-between;
 	}
 
 	.field {
@@ -708,18 +720,18 @@
 	.input,
 	.select {
 		appearance: none;
-		border: none;
-		border-bottom: 1px solid var(--t-border);
-		border-radius: 0;
-		background: transparent;
+		border: 1px solid var(--t-border);
+		border-radius: var(--t-radius-sm);
+		background: color-mix(in oklab, var(--t-bg) 55%, var(--t-surface));
 		color: var(--t-text);
 		font-family: var(--t-font-body);
-		padding: calc(0.4rem * var(--ui-scale)) calc(0.1rem * var(--ui-scale));
+		padding: calc(0.4rem * var(--ui-scale)) calc(0.5rem * var(--ui-scale));
 		line-height: 1.1;
 		transition: border-color 0.15s ease, box-shadow 0.15s ease;
 	}
 	.input::placeholder {
-		color: var(--t-text-dim);
+		/* clearly dimmer than the labels so filled fields stand apart */
+		color: color-mix(in oklab, var(--t-text-dim) 40%, transparent);
 	}
 	.select option {
 		background: var(--t-surface-high);
@@ -733,7 +745,7 @@
 	.select:focus-visible {
 		outline: none;
 		border-color: var(--t-primary);
-		box-shadow: 0 1px 0 0 var(--t-primary), 0 0 6px 0 color-mix(in oklab, var(--t-primary) 60%, transparent);
+		box-shadow: 0 0 6px 0 color-mix(in oklab, var(--t-primary) 60%, transparent);
 	}
 
 	.section {
@@ -752,15 +764,30 @@
 		display: flex;
 		align-items: center;
 		gap: 0.45rem;
-		margin: 0 0 calc(0.4rem * var(--ui-scale));
-		padding-bottom: calc(0.35rem * var(--ui-scale));
+		/* full-bleed gradient title strip, same treatment as the window
+		   title bar; negative margins pull it out to the card edges */
+		margin: calc(-0.75rem * var(--ui-scale)) calc(-0.75rem * var(--ui-scale))
+			calc(0.5rem * var(--ui-scale));
+		padding: calc(0.4rem * var(--ui-scale)) calc(0.75rem * var(--ui-scale));
+		background: linear-gradient(
+			90deg,
+			color-mix(in oklab, var(--t-primary) 22%, var(--t-surface-high)),
+			var(--t-surface-high) 65%
+		);
 		border-bottom: 1px solid var(--t-border);
+		border-radius: calc(var(--t-radius) - 1px) calc(var(--t-radius) - 1px) 0 0;
 		font-family: var(--t-font-mono);
 		font-size: calc(0.8rem * var(--ui-scale));
 		font-weight: 400;
 		letter-spacing: 0.06em;
 		text-transform: uppercase;
 		color: var(--t-primary-text);
+	}
+	/* a title strip that sits mid-card (Secondary Color) acts as a divider */
+	.card h3:not(:first-child) {
+		margin-top: calc(0.5rem * var(--ui-scale));
+		border-top: 1px solid var(--t-border);
+		border-radius: 0;
 	}
 	h3::before {
 		content: '';
