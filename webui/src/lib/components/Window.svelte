@@ -197,12 +197,29 @@
 		if (typeof window === 'undefined') return;
 		const vw = window.innerWidth;
 		const vh = window.innerHeight;
+
+		// a window must never be wider than the viewport itself — on a
+		// narrow/mobile screen this shrinks it to fit instead of letting it
+		// run off the side with no way to reach its edge or close button
+		const margin = 16;
+		if (vw - margin * 2 < (minWidth ?? 180)) {
+			width = vw - margin * 2;
+		} else if (width !== undefined && width > vw - margin * 2) {
+			width = vw - margin * 2;
+		}
+
 		const panelW = (width ?? panelEl?.offsetWidth) || 0;
-		const minVisibleX = 80;
+		const minVisibleX = Math.min(80, panelW);
 		const minLeft = -(panelW - minVisibleX);
-		const maxLeft = vw - minVisibleX;
+		const maxLeft = Math.max(minLeft, vw - minVisibleX);
 		if (left < minLeft) left = minLeft;
 		if (left > maxLeft) left = maxLeft;
+		// fully on-screen horizontally whenever it fits, rather than only
+		// requiring a sliver to be visible
+		if (panelW <= vw) {
+			if (left < 0) left = 0;
+			if (left + panelW > vw) left = vw - panelW;
+		}
 		if (top < 0) top = 0;
 		const maxTop = vh - 40;
 		if (top > maxTop) top = maxTop;
