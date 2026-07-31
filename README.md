@@ -6,11 +6,27 @@ Browser-based star map for the Roblox game Waste of Space. Search for planets an
 
 ## Live Site
 
-You can use the live version at https://dsetzer.github.io/starmap/ right away.
+**https://dsetzer.github.io/starmap/**
 
-## Works Offline (PWA)
+The original Starmap needed Node.js installed and a local server running in the background before you could open the map. This one is just a web page on GitHub Pages. There's nothing to download and no server involved, not on your machine and not on mine. Once the page loads, the whole thing runs in your browser.
 
-It's a PWA. Open the site once, then use your browser's "Install app" / "Add to Home Screen" option. After that it works offline.
+## Is anything I search logged?
+
+No. Your searches never leave your device.
+
+When the page loads, the entire universe database is downloaded into your browser. Every search, filter, and planet you click is handled right there on your own computer. None of it gets sent anywhere, because there is nowhere to send it. There's no backend, no database, and no analytics of any kind. Nobody can see what you look up.
+
+## Save It As An App
+
+Add it to your home screen or desktop and it opens from its own icon in its own window, with no internet needed.
+
+- Chrome: install icon on the right side of the address bar, or menu > Cast, save and share > Install page as app
+- Edge: menu > Apps > Install this site as an app
+- Android: menu > Add to Home screen
+- iPhone or iPad: Share button > Add to Home Screen
+- Safari on Mac: File > Add to Dock
+
+Opera and Firefox on computer don't offer this. A bookmark works just as well.
 
 ## Desktop App
 
