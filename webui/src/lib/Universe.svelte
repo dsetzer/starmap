@@ -411,6 +411,13 @@
 		function releaseDrag() {
 			dragging = false;
 			app.canvas.style.cursor = 'grab';
+			// if the pointer sat still for a bit before release, velX/velY are
+			// stale from the last real movement — don't let old motion fling
+			// the map after the user has already stopped
+			if (performance.now() - lastMoveTs > 80) {
+				velX = 0;
+				velY = 0;
+			}
 			inertiaActive = Math.hypot(velX, velY) > 30;
 			if (inertiaActive) wake();
 		}
